@@ -1,4 +1,4 @@
-package org.td.examples;
+package org.td.examples.stringprocessing;
 
 import java.util.List;
 
