@@ -6,7 +6,7 @@ import java.util.List;
 public class TypeConverter {
 
 	public enum TypeCode {
-		STRING(30), BOOLEAN(10), INTEGER(15), DOUBLE(20);
+		STRING(1), BOOLEAN(2), INTEGER(3), DOUBLE(4);
 		private int enumVal;
 
 		private TypeCode(int pvalue) {
@@ -33,7 +33,7 @@ public class TypeConverter {
 	public static List<Byte> toBytes(Object input, TypeCode inputType) {
 		switch (inputType) {
 		case STRING:
-			return stringToBytes((String)input);
+			return stringToBytes((String) input);
 		default:
 			return null;
 		}

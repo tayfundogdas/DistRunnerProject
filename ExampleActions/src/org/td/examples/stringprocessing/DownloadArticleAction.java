@@ -18,7 +18,6 @@ public class DownloadArticleAction implements CodeAction {
 		return TypeConverter.toBytes(doc.body().text(), TypeCode.STRING);
 	}
 
-	// sample input https://en.wikipedia.org/wiki/Java
 	@Override
 	public Boolean ValidateInput(List<Byte> input) throws Exception {
 		url = (String) TypeConverter.fromBytes(input, TypeCode.STRING);
@@ -26,18 +25,6 @@ public class DownloadArticleAction implements CodeAction {
 			return true;
 
 		return false;
-	}
-
-	// test method
-	public static void main(String[] args) throws Exception {
-		CodeAction action = new DownloadArticleAction();
-		List<Byte> inp = TypeConverter.toBytes("https://en.wikipedia.org/wiki/Java", TypeCode.STRING);
-		if (action.ValidateInput(inp))
-		{
-			System.out.println((String)TypeConverter.fromBytes(action.Execute(inp), TypeCode.STRING));
-		}
-		else
-			System.out.println("Err in validation");
 	}
 
 }
