@@ -6,18 +6,20 @@ import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.wsrelated.WebSocketClientChannel;
 
 public class SlaveRegistration {
-	
-	public static void Register()
-	{
-        WebSocketClientChannel wsClient = new WebSocketClientChannel();
-        Message regMessage= new Message();
-        regMessage.MessageType = MessageTypes.RegMessage;
-        regMessage.MessageObject = App.AppId;
-        wsClient.sendMessage(wsClient.getMasterWSAddress(), regMessage);
+
+	public static void Register() {
+		WebSocketClientChannel wsClient = new WebSocketClientChannel();
+		Message regMessage = new Message();
+		regMessage.MessageType = MessageTypes.RegMessage;
+		regMessage.MessageObject = App.AppId;
+		wsClient.sendMessage(wsClient.getMasterWSAddress(), regMessage);
 	}
-	
-	public static void pushHeartBeat()
-	{
-		
+
+	public static void pushHeartBeat() {
+		WebSocketClientChannel wsClient = new WebSocketClientChannel();
+		Message hbMessage = new Message();
+		hbMessage.MessageType = MessageTypes.HeartBeatMessage;
+		hbMessage.MessageObject = App.AppId;
+		wsClient.sendMessage(wsClient.getMasterWSAddress(), hbMessage);
 	}
 }

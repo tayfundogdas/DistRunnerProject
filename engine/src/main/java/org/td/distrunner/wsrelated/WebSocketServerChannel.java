@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
+import org.td.distrunner.commandhandlers.MessageDispatcher;
 
 public class WebSocketServerChannel extends WebSocketAdapter {
 	@Override
@@ -17,6 +18,7 @@ public class WebSocketServerChannel extends WebSocketAdapter {
 	@Override
 	public void onWebSocketText(String message) {
 		super.onWebSocketText(message);
+		MessageDispatcher.HandleMessage(message);
 		System.out.println("Received TEXT message: " + message);
 	}
 

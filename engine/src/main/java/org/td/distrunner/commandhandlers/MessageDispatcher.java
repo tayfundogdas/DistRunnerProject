@@ -7,13 +7,16 @@ import com.google.gson.Gson;
 
 public class MessageDispatcher {
 
-	public void HandleMessage(String incomingMessageText) {
-		Gson gson = new Gson();
+	private static Gson gson = new Gson();
+	
+	public static void HandleMessage(String incomingMessageText) {
 		Message message = gson.fromJson(incomingMessageText, Message.class);
 		switch (message.MessageType) {
 		case MessageTypes.RegMessage:
 			MasterClientList.join((String) message.MessageObject);
 			break;
+		case MessageTypes.HeartBeatMessage:
+			MasterClientList.giveHeartBeat((String) message.MessageObject);
 		default:
 			break;
 		}

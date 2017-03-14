@@ -1,10 +1,13 @@
 package org.td.distrunner.wsrelated;
 
 import java.net.URI;
+import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.td.distrunner.commandhandlers.SlaveRegistration;
+import org.td.distrunner.engine.App;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
@@ -50,13 +53,34 @@ public class WebSocketClientChannel {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Hello World!");
-
-		WebSocketClientChannel wsClient = new WebSocketClientChannel();
-		Message dummyMessage= new Message();
-		dummyMessage.MessageType = MessageTypes.DummyMessage;
-		dummyMessage.MessageObject = "Hello";
-		wsClient.sendMessage(wsClient.getMasterWSAddress(), dummyMessage);
-
+		//for test
+		UUID uuid = UUID.randomUUID();
+		App.AppId = uuid.toString();
+		
+		regAndHbTest();
 	}
+	
+	//region TESTS
+	
+	public static void dummyTest()
+	{
+		WebSocketClientChannel wsClient = new WebSocketClientChannel();
+		Message mess= new Message();
+		mess.MessageType = MessageTypes.DummyMessage;
+		mess.MessageObject = "Hello";
+		wsClient.sendMessage(wsClient.getMasterWSAddress(), mess);
+	}
+	
+	public static void regAndHbTest()
+	{
+		SlaveRegistration.Register();
+		try {
+			Thread.currentThread().sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		SlaveRegistration.pushHeartBeat();
+	}
+	
+	//endregion
 }
