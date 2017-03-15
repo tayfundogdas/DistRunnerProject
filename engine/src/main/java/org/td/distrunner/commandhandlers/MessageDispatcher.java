@@ -13,7 +13,7 @@ public class MessageDispatcher {
 		Message message = gson.fromJson(incomingMessageText, Message.class);
 		switch (message.MessageType) {
 		case MessageTypes.HeartBeatMessage:
-			MasterClientList.giveHeartBeat((String) message.MessageObject);
+			MasterHeartBeatJob.giveHeartBeat((String) message.MessageObject);
 		default:
 			break;
 		}

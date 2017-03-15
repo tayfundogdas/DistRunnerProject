@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.td.distrunner.commandhandlers.MasterClientList;
+import org.td.distrunner.commandhandlers.MasterHeartBeatJob;
 import org.td.distrunner.model.ClientModel;
 
 public class ApiHandler extends HttpServlet {
@@ -27,7 +27,7 @@ public class ApiHandler extends HttpServlet {
 		case "/ClientList":
 			response.getWriter().println("<h1>Clients</h1>");
 			StringBuilder res = new StringBuilder();
-			for (ClientModel client : MasterClientList.clients.values()) {
+			for (ClientModel client : MasterHeartBeatJob.clients.values()) {
 				res.append(client.Id);
 				res.append("<->");
 				res.append(client.lastHeartBeat);

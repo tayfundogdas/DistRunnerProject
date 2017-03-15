@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.joda.time.DateTime;
 import org.td.distrunner.model.ClientModel;
 
-public class MasterClientList {
+public class MasterHeartBeatJob {
 
 	public static ConcurrentHashMap<String,ClientModel> clients = new ConcurrentHashMap<String,ClientModel>();
 
@@ -14,7 +14,6 @@ public class MasterClientList {
 		{
 			ClientModel client = clients.get(clientUniqueId);
 			client.lastHeartBeat = DateTime.now();
-			
 		} else // new
 		{
 			ClientModel client = new ClientModel();
