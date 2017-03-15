@@ -12,9 +12,6 @@ public class MessageDispatcher {
 	public static void HandleMessage(String incomingMessageText) {
 		Message message = gson.fromJson(incomingMessageText, Message.class);
 		switch (message.MessageType) {
-		case MessageTypes.RegMessage:
-			MasterClientList.join((String) message.MessageObject);
-			break;
 		case MessageTypes.HeartBeatMessage:
 			MasterClientList.giveHeartBeat((String) message.MessageObject);
 		default:

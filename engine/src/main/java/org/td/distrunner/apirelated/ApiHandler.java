@@ -27,7 +27,7 @@ public class ApiHandler extends HttpServlet {
 		case "/ClientList":
 			response.getWriter().println("<h1>Clients</h1>");
 			StringBuilder res = new StringBuilder();
-			for (ClientModel client : MasterClientList.clients) {
+			for (ClientModel client : MasterClientList.clients.values()) {
 				res.append(client.Id);
 				res.append("<->");
 				res.append(client.lastHeartBeat);

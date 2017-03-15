@@ -5,4 +5,5 @@ public class AppSettings {
 	public static String WSChannelName = "ws";
 	public static String APIChannelName = "api";
 	public static int JettyPort = 8080;
+	public static String SlaveHeartBeatCronSchedule = "0/5 * * * * ?";
 }

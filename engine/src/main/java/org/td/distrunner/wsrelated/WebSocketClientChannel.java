@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.td.distrunner.commandhandlers.SlaveRegistration;
+import org.td.distrunner.commandhandlers.SlaveHeartBeatJob;
 import org.td.distrunner.engine.App;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
@@ -73,13 +73,14 @@ public class WebSocketClientChannel {
 	
 	public static void regAndHbTest()
 	{
-		SlaveRegistration.Register();
 		try {
-			Thread.currentThread().sleep(2000);
-		} catch (InterruptedException e) {
+			Thread.currentThread();
+			Thread.sleep(2000);
+			SlaveHeartBeatJob hbjob= new SlaveHeartBeatJob();
+			hbjob.execute(null);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		SlaveRegistration.pushHeartBeat();
 	}
 	
 	//endregion
