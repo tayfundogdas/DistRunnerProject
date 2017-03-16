@@ -14,15 +14,15 @@ public class HeartBeatRequestHandle implements IRequestHandler {
 		if (InMemoryObjects.clients.containsKey(clientUniqueId)) // existing
 		{
 			ClientModel client = InMemoryObjects.clients.get(clientUniqueId);
-			client.lastHeartBeat = DateTime.now();
+			client.lastHeartBeat = DateTime.now().toString();
 		} else // new
 		{
 			ClientModel client = new ClientModel();
 			client.Id = clientUniqueId;
-			client.lastHeartBeat = DateTime.now();
+			client.lastHeartBeat = DateTime.now().toString();
 			InMemoryObjects.clients.put(clientUniqueId, client);
 		}
-		
+
 		return null;
 	}
 }

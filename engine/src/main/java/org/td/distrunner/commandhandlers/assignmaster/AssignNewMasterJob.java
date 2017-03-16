@@ -1,4 +1,4 @@
-package org.td.distrunner.commandhandlers;
+package org.td.distrunner.commandhandlers.assignmaster;
 
 public class AssignNewMasterJob {
 

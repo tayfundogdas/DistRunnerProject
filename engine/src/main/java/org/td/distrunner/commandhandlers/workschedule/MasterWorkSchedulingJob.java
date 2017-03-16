@@ -1,4 +1,4 @@
-package org.td.distrunner.commandhandlers;
+package org.td.distrunner.commandhandlers.workschedule;
 
 //this method try to schedule jobs as parallel as possible by examining data dependencies
 public class MasterWorkSchedulingJob {

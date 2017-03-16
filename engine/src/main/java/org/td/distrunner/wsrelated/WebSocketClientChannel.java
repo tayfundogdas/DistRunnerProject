@@ -6,17 +6,17 @@ import java.util.concurrent.Future;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestJob;
+import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestJob;
 import org.td.distrunner.engine.App;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
-import org.td.distrunner.model.MessageTypes;
 
 public class WebSocketClientChannel {
 
 	public static String getMasterWSAddress() {
 		StringBuilder str = new StringBuilder();
-		str.append("ws://");
+		str.append(AppSettings.WSChannelName);
+		str.append("://");
 		str.append(AppSettings.MasterAddress);
 		str.append(":");
 		str.append(AppSettings.JettyPort);
@@ -26,10 +26,10 @@ public class WebSocketClientChannel {
 
 		return str.toString();
 	}
-	
+
 	public static void sendMessagetoMaster(Message message) {
 		String url = getMasterWSAddress();
-		
+
 		URI uri = URI.create(url);
 
 		WebSocketClient client = new WebSocketClient();
@@ -54,33 +54,13 @@ public class WebSocketClientChannel {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// for test
 		UUID uuid = UUID.randomUUID();
 		App.AppId = uuid.toString();
+		AppSettings.MasterAddress ="127.0.0.1";
 
-		regAndHbTest();
+		MasterCandidatesSyncRequestJob req = new MasterCandidatesSyncRequestJob();
+		req.execute(null);
 	}
-
-	// region TESTS
-
-	public static void dummyTest() {
-		Message mess = new Message();
-		mess.MessageType = MessageTypes.DummyMessage;
-		mess.MessageObject = "Hello";
-		sendMessagetoMaster(mess);
-	}
-
-	public static void regAndHbTest() {
-		try {
-			Thread.currentThread();
-			Thread.sleep(2000);
-			HeartBeatRequestJob hbjob = new HeartBeatRequestJob();
-			hbjob.execute(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// endregion
 }

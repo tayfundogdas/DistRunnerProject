@@ -14,14 +14,20 @@ public class HeartBeatRequestJobRegister implements IJobRegister {
 
 	@Override
 	public void registerJob() throws Exception {
-		JobDetail job = JobBuilder.newJob(HeartBeatRequestJob.class).withIdentity("HeartBeatRequestJob", "grpHeartBeatRequestJob").build();
+		// request heartbeat to master if this node is not master
+		if (!AppSettings.MasterAddress.isEmpty()) {
+			JobDetail job = JobBuilder.newJob(HeartBeatRequestJob.class)
+					.withIdentity("HeartBeatRequestJob", "grpHeartBeatRequestJob").build();
 
-		Trigger trigger = TriggerBuilder.newTrigger().withIdentity("HeartBeatRequestJobTrigger", "grpHeartBeatRequestJob")
-				.withSchedule(CronScheduleBuilder.cronSchedule(AppSettings.HeartBeatRequestJobCronSchedule)).build();
+			Trigger trigger = TriggerBuilder.newTrigger()
+					.withIdentity("HeartBeatRequestJobTrigger", "grpHeartBeatRequestJob")
+					.withSchedule(CronScheduleBuilder.cronSchedule(AppSettings.HeartBeatRequestJobCronSchedule))
+					.build();
 
-		// schedule it
-		Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-		scheduler.start();
-		scheduler.scheduleJob(job, trigger);	
+			// schedule it
+			Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+			scheduler.start();
+			scheduler.scheduleJob(job, trigger);
+		}
 	}
 }
