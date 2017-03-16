@@ -51,6 +51,11 @@
 			<artifactId>quartz</artifactId>
 			<version>2.2.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.10</version>
+		</dependency>
 		<!-- Testing section -->
 		<dependency>
 			<groupId>junit</groupId>

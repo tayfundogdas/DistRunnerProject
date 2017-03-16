@@ -10,7 +10,7 @@ import org.td.distrunner.wsrelated.WebSocketServletChannel;
 
 public class JettyServer {
 	
-	public void startServer()
+	public static void startServer()
 	{
 		Server server = new Server();
 		ServerConnector connector = new ServerConnector(server);

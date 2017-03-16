@@ -2,8 +2,6 @@ package org.td.distrunner.engine;
 
 import java.util.UUID;
 
-import org.td.distrunner.commandhandlers.SlaveRegistration;
-
 /**
  * Hello world!
  *
@@ -16,12 +14,11 @@ public class App {
 		UUID uuid = UUID.randomUUID();
 		AppId = uuid.toString();
 
-		// register and send heartbeats with quartz interval
-		SlaveRegistration.initHeartBeatJob();
+		// register scheduled jobs
+		ScheduledJobsRegisterer.registerJobs();
 
 		// start socket and api server valid both for master and slave
-		JettyServer jetty = new JettyServer();
-		jetty.startServer();
+		JettyServer.startServer();
 
 	}
 }

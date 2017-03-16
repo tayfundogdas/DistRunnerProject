@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.td.distrunner.commandhandlers.SlaveHeartBeatJob;
+import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestJob;
 import org.td.distrunner.engine.App;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
@@ -14,7 +14,7 @@ import org.td.distrunner.model.MessageTypes;
 
 public class WebSocketClientChannel {
 
-	public String getMasterWSAddress() {
+	public static String getMasterWSAddress() {
 		StringBuilder str = new StringBuilder();
 		str.append("ws://");
 		str.append(AppSettings.MasterAddress);
@@ -26,8 +26,10 @@ public class WebSocketClientChannel {
 
 		return str.toString();
 	}
-
-	public void sendMessage(String url, Message message) {
+	
+	public static void sendMessagetoMaster(Message message) {
+		String url = getMasterWSAddress();
+		
 		URI uri = URI.create(url);
 
 		WebSocketClient client = new WebSocketClient();
@@ -53,35 +55,32 @@ public class WebSocketClientChannel {
 	}
 
 	public static void main(String[] args) {
-		//for test
+		// for test
 		UUID uuid = UUID.randomUUID();
 		App.AppId = uuid.toString();
-		
+
 		regAndHbTest();
 	}
-	
-	//region TESTS
-	
-	public static void dummyTest()
-	{
-		WebSocketClientChannel wsClient = new WebSocketClientChannel();
-		Message mess= new Message();
+
+	// region TESTS
+
+	public static void dummyTest() {
+		Message mess = new Message();
 		mess.MessageType = MessageTypes.DummyMessage;
 		mess.MessageObject = "Hello";
-		wsClient.sendMessage(wsClient.getMasterWSAddress(), mess);
+		sendMessagetoMaster(mess);
 	}
-	
-	public static void regAndHbTest()
-	{
+
+	public static void regAndHbTest() {
 		try {
 			Thread.currentThread();
 			Thread.sleep(2000);
-			SlaveHeartBeatJob hbjob= new SlaveHeartBeatJob();
+			HeartBeatRequestJob hbjob = new HeartBeatRequestJob();
 			hbjob.execute(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	//endregion
+
+	// endregion
 }
