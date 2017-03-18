@@ -13,12 +13,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class InMemoryObjects {
-	// active live client list
+	// active live client list key is client id
 	public static ConcurrentHashMap<String, ClientModel> clients = new ConcurrentHashMap<String, ClientModel>();
 	// key is job id
 	public static ConcurrentHashMap<String, JobModel> jobs = new ConcurrentHashMap<String, JobModel>();
-	// key is clientuniqueid value is job count on client
+	// key is client id and value is job count on client
 	public static ConcurrentHashMap<String, JobCountModel> clientJobsCount = new ConcurrentHashMap<String, JobCountModel>();
+	//heart beat failure count for starting 0
+	public static Byte heartBeatFailCount = 0;
 
 	public static List<String> getSynchronizeData() {
 		List<String> transwerObj = new ArrayList<String>();

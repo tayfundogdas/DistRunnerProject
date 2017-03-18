@@ -1,33 +1,24 @@
 package org.td.distrunner.commandhandlers.heartbeat;
 
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
 import org.td.distrunner.commandhandlers.IJobRegister;
+import org.td.distrunner.engine.JobRegisterHelper;
 import org.td.distrunner.model.AppSettings;
 
 public class HeartBeatRequestJobRegister implements IJobRegister {
 
 	@Override
-	public void registerJob() throws Exception {
-		// request heartbeat to master if this node is not master
-		if (!AppSettings.MasterAddress.isEmpty()) {
-			JobDetail job = JobBuilder.newJob(HeartBeatRequestJob.class)
-					.withIdentity("HeartBeatRequestJob", "grpHeartBeatRequestJob").build();
+	public void startJob() throws Exception {
+		JobRegisterHelper.startJob(getJobName(), HeartBeatRequestJob.class,
+				AppSettings.HeartBeatRequestJobCronSchedule);
+	}
 
-			Trigger trigger = TriggerBuilder.newTrigger()
-					.withIdentity("HeartBeatRequestJobTrigger", "grpHeartBeatRequestJob")
-					.withSchedule(CronScheduleBuilder.cronSchedule(AppSettings.HeartBeatRequestJobCronSchedule))
-					.build();
+	@Override
+	public void stopJob() throws Exception {
+		JobRegisterHelper.stopJob(getJobName());
+	}
 
-			// schedule it
-			Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-			scheduler.start();
-			scheduler.scheduleJob(job, trigger);
-		}
+	@Override
+	public String getJobName() {
+		return "HeartBeatRequestJob";
 	}
 }

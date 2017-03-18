@@ -15,10 +15,12 @@ public class App {
 		AppId = uuid.toString();
 
 		// register scheduled jobs
-		ScheduledJobsRegisterer.registerJobs();
+		JobRegisterHelper.registerJobs();
+		//start jobs
+		JobRegisterHelper.startScheduler();
 
 		// start socket and api server valid both for master and slave
-		JettyServer.startServer();
+		//JettyServer.startServer();
 
 	}
 }
