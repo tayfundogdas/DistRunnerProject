@@ -3,6 +3,7 @@ package org.td.distrunner.commandhandlers.heartbeat;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.td.distrunner.commandhandlers.assignmaster.AssignNewMasterJob;
 import org.td.distrunner.engine.App;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.JobRegisterHelper;
@@ -30,6 +31,11 @@ public class HeartBeatRequestJob implements Job {
 		else //if master is down stop all jobs
 		{
 			JobRegisterHelper.cancelAllJobsIfMasterDied();
+			
+			//if this node is master candidate signal NewMasterMessage
+			if (AppSettings.IsMasterCandidate == 1) {
+				AssignNewMasterJob.broadcastNewMasterMessagetoNodes();
+			}
 		}			
 	}
 	

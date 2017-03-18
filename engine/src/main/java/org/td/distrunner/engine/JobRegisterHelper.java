@@ -60,7 +60,6 @@ public class JobRegisterHelper {
 	public static void stopJob(String jobName) throws Exception {
 		Scheduler scheduler = getScheduler();
 		scheduler.pauseTrigger(new TriggerKey(jobName));
-		System.out.println("stopJob : " + jobName);
 	}
 	
 	public static void cancelAllJobsIfMasterDied()
@@ -71,6 +70,25 @@ public class JobRegisterHelper {
 			try {
 				final IJobRegister registerHandle = clazz.newInstance();
 				registerHandle.stopJob();
+			} catch (final Exception e) {
+				e.printStackTrace(System.err);
+			}
+		});
+	}
+	
+	public static void restartJob(String jobName) throws Exception {
+		Scheduler scheduler = getScheduler();
+		scheduler.resumeTrigger(new TriggerKey(jobName));
+	}
+	
+	public static void restartAllJobsIfMasterUp()
+	{
+		Reflections reflections = new Reflections("org.td.distrunner.commandhandlers");
+		Set<Class<? extends IJobRegister>> classes = reflections.getSubTypesOf(IJobRegister.class);
+		classes.forEach(clazz -> {
+			try {
+				final IJobRegister registerHandle = clazz.newInstance();
+				registerHandle.restartJob();
 			} catch (final Exception e) {
 				e.printStackTrace(System.err);
 			}

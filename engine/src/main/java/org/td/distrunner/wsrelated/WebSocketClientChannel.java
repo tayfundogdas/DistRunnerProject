@@ -44,4 +44,24 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		session.close();
 		client.stop();
 	}
+	
+	public static void sendMessagetoAddress(Message message,String url) throws Exception {
+		URI uri = URI.create(url);
+
+		WebSocketClient client = new WebSocketClient();
+
+		client.start();
+		// The socket that receives events
+		WebSocketClientChannel socket = new WebSocketClientChannel();
+		// Attempt Connect
+		Future<Session> fut = client.connect(socket, uri);
+		// Wait for Connect
+		Session session = fut.get();
+		// Send a message
+		session.getRemote().sendString(message.getJsonForm());
+		// Close session
+		session.close();
+		client.stop();
+	}
+	
 }

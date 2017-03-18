@@ -12,7 +12,6 @@ public class MasterCandidatesSyncRequestJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		System.out.println("MasterCandidatesSyncRequestJob");
 		Message mess = new Message();
 		mess.MessageType = MessageTypes.MasterSyncRequestMessage;
 		try {

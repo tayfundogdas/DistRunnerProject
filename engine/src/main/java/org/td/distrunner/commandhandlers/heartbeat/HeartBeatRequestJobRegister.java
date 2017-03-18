@@ -18,6 +18,11 @@ public class HeartBeatRequestJobRegister implements IJobRegister {
 	}
 
 	@Override
+	public void restartJob() throws Exception {
+		JobRegisterHelper.restartJob(getJobName());		
+	}
+	
+	@Override
 	public String getJobName() {
 		return "HeartBeatRequestJob";
 	}

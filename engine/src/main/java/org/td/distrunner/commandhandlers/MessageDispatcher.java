@@ -1,5 +1,6 @@
 package org.td.distrunner.commandhandlers;
 
+import org.td.distrunner.commandhandlers.assignmaster.NewMasterHandle;
 import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncResponseHandle;
@@ -35,6 +36,9 @@ public class MessageDispatcher {
 			break;
 		case MessageTypes.MasterSyncResponseMessage:
 			messageHandler = new MasterCandidatesSyncResponseHandle();
+			break;
+		case MessageTypes.NewMasterMessage:
+			messageHandler = new NewMasterHandle();
 			break;
 		default:
 			messageHandler = null;

@@ -20,7 +20,7 @@ public class App {
 		JobRegisterHelper.startScheduler();
 
 		// start socket and api server valid both for master and slave
-		//JettyServer.startServer();
+		JettyServer.startServer();
 
 	}
 }

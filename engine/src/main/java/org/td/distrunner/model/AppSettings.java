@@ -18,15 +18,15 @@ public class AppSettings {
 	public static Byte IsMasterCandidate = 1;
 	//constant for heart beat threshold
 	public static Byte HeartBeatTreshold = 5; 
-	//constant for calculating jobcount*waittimeconstant for new master request
-	public static Integer MasterRequestWaitTimeConstant = 1000; 
+	//constant for calculating jobcount*waittimeconstant for new master request in seconds
+	public static Integer MasterRequestWaitTimeConstant = 5; 
 	
-	public void saveToFile(String filename)
+	public static void saveToFile()
 	{
 		
 	}
 	
-	public void loadFromFile(String filename)
+	public static void loadFromFile()
 	{
 		
 	}
