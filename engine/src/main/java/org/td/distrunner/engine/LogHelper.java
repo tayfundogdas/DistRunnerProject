@@ -15,6 +15,7 @@ public class LogHelper {
 	private static final Logger LOG = LoggerFactory.getLogger("DistRunner");
 	public static final byte INFO = 0;
 	public static final byte ERROR = 1;
+	public static final byte TRACE = 2;
 
 	public static void setupLog() {
 		// for disable jetty server debug messages
@@ -36,6 +37,9 @@ public class LogHelper {
 		case ERROR:
 			LOG.error(message);
 			break;
+		case TRACE:
+			LOG.trace(message);
+			break;
 		default:
 			break;
 		}
@@ -45,5 +49,9 @@ public class LogHelper {
 		StringWriter errors = new StringWriter();
 		message.printStackTrace(new PrintWriter(errors));
 		log(errors.toString(), ERROR);
+	}
+	
+	public static void logTrace(String message) {
+		log(message, TRACE);
 	}
 }

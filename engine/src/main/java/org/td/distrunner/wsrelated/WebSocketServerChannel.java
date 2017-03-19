@@ -14,7 +14,7 @@ public class WebSocketServerChannel extends WebSocketAdapter {
 		Message response = MessageDispatcher.HandleMessage(message,
 				prepareRemoteAddress(super.getSession().getRemoteAddress().toString()));
 		handleResponseMessage(response);
-		System.out.println("Received TEXT message: " + message);
+		LogHelper.logTrace("Received message@" + message);
 	}
 
 	private String prepareRemoteAddress(String rawAddress) {

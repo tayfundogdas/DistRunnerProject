@@ -21,6 +21,7 @@ public class AppSettings {
 	//constant for calculating jobcount*waittimeconstant for new master request in seconds
 	public static Integer MasterRequestWaitTimeConstant = 5; 
 	public static String ApplicationLogSettingsPath = "D:\\ApplicationLogSettings.xml"; 
+	public static String RequestLogSettingsPath = "D:\\RequestLogSettings.xml"; 
 	
 	public static void saveToFile()
 	{
