@@ -2,19 +2,20 @@ package org.td.distrunner.wsrelated;
 
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
+import org.td.distrunner.engine.EnableLogging;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 
 public class WebSocketServerChannel extends WebSocketAdapter {
 
 	@Override
+	@EnableLogging
 	public void onWebSocketText(String message) {
 		super.onWebSocketText(message);
 		// process request message and send response
 		Message response = MessageDispatcher.HandleMessage(message,
 				prepareRemoteAddress(super.getSession().getRemoteAddress().toString()));
 		handleResponseMessage(response);
-		LogHelper.logTrace("Received message@" + message);
 	}
 
 	private String prepareRemoteAddress(String rawAddress) {

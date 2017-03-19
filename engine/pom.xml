@@ -76,7 +76,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junitVersion}</version>
-			<scope>test</scope>
 		</dependency>
 		<!-- Testing section -->
 	</dependencies>
@@ -88,9 +87,14 @@
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>1.10</version>
 				<configuration>
-					<source>
-						<basedir>src</basedir>
-					</source>
+					<sources>
+						<source>
+							<basedir>src</basedir>
+						</source>
+						<source>
+							<basedir>D:\java\git\DistRunnerProject\SharedClientLibraries\src</basedir>
+						</source>
+					</sources>
 					<complianceLevel>1.8</complianceLevel>
 					<source>1.8</source>
 					<target>1.8</target>

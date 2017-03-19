@@ -9,12 +9,12 @@ import org.aspectj.lang.reflect.MethodSignature;
 public class MethodLogger {
 	@Around("execution(* *(..)) && @annotation(EnableLogging)")
 	public Object around(ProceedingJoinPoint point) {
-		long start = System.currentTimeMillis();
+		long start = System.nanoTime();
 		Object result = "";
 		long end = 0;
 		try {
 			result = point.proceed();
-			end = System.currentTimeMillis() - start;
+			end = System.nanoTime() - start;
 		} catch (Throwable e) {
 			LogHelper.logError(e);
 		}
@@ -36,6 +36,7 @@ public class MethodLogger {
 		logText.append(result);
 		logText.append(" in ");
 		logText.append(end);
+		logText.append("ns");
 
 		LogHelper.logTrace(logText.toString());
 		return result;
