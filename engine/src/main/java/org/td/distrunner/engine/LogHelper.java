@@ -45,9 +45,15 @@ public class LogHelper {
 		}
 	}
 
-	public static void logError(Exception message) {
+	public static void logError(Exception e) {
 		StringWriter errors = new StringWriter();
-		message.printStackTrace(new PrintWriter(errors));
+		e.printStackTrace(new PrintWriter(errors));
+		log(errors.toString(), ERROR);
+	}
+	
+	public static void logError(Throwable e) {
+		StringWriter errors = new StringWriter();
+		e.printStackTrace(new PrintWriter(errors));
 		log(errors.toString(), ERROR);
 	}
 	
