@@ -56,6 +56,16 @@
 			<artifactId>reflections</artifactId>
 			<version>0.9.10</version>
 		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-access</artifactId>
+			<version>1.2.2</version>
+		</dependency>
 		<!-- Testing section -->
 		<dependency>
 			<groupId>junit</groupId>

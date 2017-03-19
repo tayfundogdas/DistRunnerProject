@@ -1,9 +1,8 @@
 package org.td.distrunner.wsrelated;
 
-import java.io.IOException;
-
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
+import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 
 public class WebSocketServerChannel extends WebSocketAdapter {
@@ -29,8 +28,8 @@ public class WebSocketServerChannel extends WebSocketAdapter {
 		if (response != null) {
 			try {
 				super.getSession().getRemote().sendString(response.getJsonForm());
-			} catch (IOException e) {
-				e.printStackTrace(System.err);
+			} catch (Exception e) {
+				LogHelper.logError(e);
 			}
 		}
 	}

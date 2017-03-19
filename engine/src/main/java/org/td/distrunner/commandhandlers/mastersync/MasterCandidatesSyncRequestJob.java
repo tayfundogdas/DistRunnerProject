@@ -3,6 +3,7 @@ package org.td.distrunner.commandhandlers.mastersync;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.wsrelated.WebSocketClientChannel;
@@ -17,6 +18,7 @@ public class MasterCandidatesSyncRequestJob implements Job {
 		try {
 			WebSocketClientChannel.sendMessagetoMaster(mess);
 		} catch (Exception e) {
+			LogHelper.logError(e);
 		}
 	}
 

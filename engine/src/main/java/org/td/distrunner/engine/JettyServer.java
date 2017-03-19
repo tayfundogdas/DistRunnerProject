@@ -8,6 +8,8 @@ import org.td.distrunner.apirelated.ApiHandler;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.wsrelated.WebSocketServletChannel;
 
+import ch.qos.logback.access.jetty.RequestLogImpl;
+
 public class JettyServer {
 	
 	public static void startServer()
@@ -30,13 +32,17 @@ public class JettyServer {
 		// add a api path
 		ServletHolder api = new ServletHolder(AppSettings.APIChannelName, ApiHandler.class);
 		context.addServlet(api, "/" + AppSettings.APIChannelName + "/*");
+		
+		//logging
+		RequestLogImpl requestLog = new RequestLogImpl();
+		requestLog.setResource("D:\\logback-access.xml");
+		server.setRequestLog(requestLog);
 
 		try {
 			server.start();
-			server.dump(System.err);
-			server.join();
-		} catch (Throwable t) {
-			t.printStackTrace(System.err);
+			//server.join(); no wait until server is ready
+		} catch (Exception e) {
+			LogHelper.logError(e);
 		}
 	}
 	

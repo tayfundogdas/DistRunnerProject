@@ -7,20 +7,26 @@ import java.util.UUID;
  *
  */
 public class App {
-	public static String AppId = null;
+	
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		// unique app id for tracking
 		UUID uuid = UUID.randomUUID();
-		AppId = uuid.toString();
+		InMemoryObjects.AppId = uuid.toString();
 
-		// register scheduled jobs
-		JobRegisterHelper.registerJobs();
-		//start jobs
-		JobRegisterHelper.startScheduler();
+		// for logging
+		LogHelper.setupLog();
+
+		try {
+			// register scheduled jobs
+			JobRegisterHelper.registerJobs();
+			// start jobs
+			JobRegisterHelper.startScheduler();
+		} catch (Exception e) {
+			LogHelper.logError(e);
+		}
 
 		// start socket and api server valid both for master and slave
 		JettyServer.startServer();
-
 	}
 }

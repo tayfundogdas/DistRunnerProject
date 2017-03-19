@@ -21,6 +21,8 @@ public class InMemoryObjects {
 	public static ConcurrentHashMap<String, JobCountModel> clientJobsCount = new ConcurrentHashMap<String, JobCountModel>();
 	//heart beat failure count for starting 0
 	public static Byte heartBeatFailCount = 0;
+	//unique client id
+	public static String AppId = null;
 
 	public static List<String> getSynchronizeData() {
 		List<String> transwerObj = new ArrayList<String>();

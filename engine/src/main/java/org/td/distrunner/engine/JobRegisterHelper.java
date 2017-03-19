@@ -40,7 +40,7 @@ public class JobRegisterHelper {
 				final IJobRegister registerHandle = clazz.newInstance();
 				registerHandle.startJob();
 			} catch (final Exception e) {
-				e.printStackTrace(System.err);
+				LogHelper.logError(e);
 			}
 		});
 	}
@@ -71,7 +71,7 @@ public class JobRegisterHelper {
 				final IJobRegister registerHandle = clazz.newInstance();
 				registerHandle.stopJob();
 			} catch (final Exception e) {
-				e.printStackTrace(System.err);
+				LogHelper.logError(e);
 			}
 		});
 	}
@@ -90,7 +90,7 @@ public class JobRegisterHelper {
 				final IJobRegister registerHandle = clazz.newInstance();
 				registerHandle.restartJob();
 			} catch (final Exception e) {
-				e.printStackTrace(System.err);
+				LogHelper.logError(e);
 			}
 		});
 	}

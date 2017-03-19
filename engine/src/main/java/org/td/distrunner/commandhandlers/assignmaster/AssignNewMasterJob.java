@@ -4,8 +4,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import org.td.distrunner.engine.App;
 import org.td.distrunner.engine.InMemoryObjects;
+import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.JobCountModel;
 import org.td.distrunner.model.Message;
@@ -23,7 +23,7 @@ public class AssignNewMasterJob {
 	public static void broadcastNewMasterMessagetoNodes() {
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		long delay = 0;
-		JobCountModel myJobCount = InMemoryObjects.clientJobsCount.get(App.AppId);
+		JobCountModel myJobCount = InMemoryObjects.clientJobsCount.get(InMemoryObjects.AppId);
 		if (myJobCount == null || myJobCount.JobCount <= 0)
 			delay = AppSettings.MasterRequestWaitTimeConstant;
 		else
@@ -35,10 +35,13 @@ public class AssignNewMasterJob {
 					Message mess = new Message();
 					mess.MessageType = MessageTypes.NewMasterMessage;
 					// send my ip as new master address
-					mess.MessageObject = InMemoryObjects.clients.get(App.AppId).Address;
+					mess.MessageObject = InMemoryObjects.clients.get(InMemoryObjects.AppId).Address;
 					try {
 						WebSocketClientChannel.sendMessagetoAddress(mess, client.Address);
-					} catch (Exception e) {}
+					} catch (Exception e) 
+					{
+						LogHelper.logError(e);
+					}
 				});
 			}
 		}, delay, TimeUnit.SECONDS);

@@ -16,7 +16,7 @@ public class MasterWorkSchedulingJob {
 		
 	}
 	
-	//if no heartbeat from scheduled node reschedule to new node
+	//if no heart beat from scheduled node reschedule to new node
 	public static void rescheduleJob()
 	{
 		

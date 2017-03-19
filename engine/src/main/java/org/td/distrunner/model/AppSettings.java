@@ -20,6 +20,7 @@ public class AppSettings {
 	public static Byte HeartBeatTreshold = 5; 
 	//constant for calculating jobcount*waittimeconstant for new master request in seconds
 	public static Integer MasterRequestWaitTimeConstant = 5; 
+	public static String ApplicationLogSettingsPath = "D:\\ApplicationLogSettings.xml"; 
 	
 	public static void saveToFile()
 	{
