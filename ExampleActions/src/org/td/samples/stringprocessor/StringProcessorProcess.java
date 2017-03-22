@@ -1,4 +1,4 @@
-package org.td.examples.stringprocessing;
+package org.td.samples.stringprocessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,15 @@ import org.td.typesystem.TypeConverter.TypeCode;
 
 //from ProcessNodesfromXMLoperation some execution model created
 //like below
-public class StringOperationsProcess implements CodeAction {
+public class StringProcessorProcess implements CodeAction {
 	private static List<CodeAction> ProcessTree = new ArrayList<CodeAction>();
 
 	// for test only!! normally it will be created from
 	// ProcessNodesfromXMLoperation
 	public void InitProcessTree() {
 		ProcessTree.add(new DownloadArticleAction());
-		ProcessTree.add(new SplitWordsAction());
-		ProcessTree.add(new PrintCharCountAction());
+		ProcessTree.add(new TokenizeWordsAction());
+		ProcessTree.add(new CalculateWordsCountsAction());
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class StringOperationsProcess implements CodeAction {
 
 	// test method
 	public static void main(String[] args) throws Exception {
-		CodeAction process = new StringOperationsProcess();
+		CodeAction process = new StringProcessorProcess();
 		List<Byte> firstInput = TypeConverter.toBytes("https://en.wikipedia.org/wiki/Java", TypeCode.STRING);
 		List<Byte> finalOutput = process.Execute(firstInput);
 		if (finalOutput == null)

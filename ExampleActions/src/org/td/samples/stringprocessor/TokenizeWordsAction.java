@@ -1,4 +1,4 @@
-package org.td.examples.stringprocessing;
+package org.td.samples.stringprocessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.td.typesystem.TypeConverter.TypeCode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class SplitWordsAction implements CodeAction {
+public class TokenizeWordsAction implements CodeAction {
 
 	@Override
 	public List<Byte> Execute(List<Byte> input) throws Exception {
