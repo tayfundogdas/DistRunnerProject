@@ -13,6 +13,10 @@ public class Process {
 
 	public List<Process> SubProcesses;
 
+	public Process() {
+		this.SubProcesses = new ArrayList<Process>();
+	}
+
 	public Process(String id, Boolean isParallel) {
 		this.Id = id;
 		this.SubProcesses = new ArrayList<Process>();
@@ -22,10 +26,7 @@ public class Process {
 	public Process(String id, String executable) {
 		this.Id = id;
 		this.Executable = executable;
-	}
-
-	public Boolean isCodeActionNode() {
-		return this.SubProcesses == null && this.Executable.length() > 0;
+		this.SubProcesses = new ArrayList<Process>();
 	}
 
 }

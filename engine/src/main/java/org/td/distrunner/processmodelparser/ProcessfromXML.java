@@ -18,19 +18,6 @@ import org.xml.sax.InputSource;
 
 public class ProcessfromXML {
 
-	private static HashMap<String, Process> convertNodeListtoListofCodeActionNode(NodeList nodeList, XPath xPath)
-			throws Exception {
-		HashMap<String, Process> unOrderedNodes = new HashMap<String, Process>();
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Element node = (Element) nodeList.item(i);
-			String id = node.getAttribute("id");
-			String executable = xPath.evaluate("script", node);
-			unOrderedNodes.put(id, new Process(id, executable));
-		}
-
-		return unOrderedNodes;
-	}
-
 	private static HashMap<String, String> getRelationTable(NodeList orderNodeList) throws Exception {
 		HashMap<String, String> result = new HashMap<String, String>();
 		for (int i = 0; i < orderNodeList.getLength(); i++) {
@@ -56,37 +43,57 @@ public class ProcessfromXML {
 		return orderedNodes;
 	}
 
-	private static HashMap<String, Process> populateNodes(Document doc, XPath xPath, String query) throws Exception {
-		NodeList nodeList = (NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET);
-		HashMap<String, Process> unOrderedNodes = convertNodeListtoListofCodeActionNode(nodeList, xPath);
+	private static HashMap<String, Process> populateNodes(NodeList rawNodes, XPath xPath) throws Exception {
+		HashMap<String, Process> unOrderedNodes = new HashMap<String, Process>();
+		for (int i = 0; i < rawNodes.getLength(); i++) {
+			Element node = (Element) rawNodes.item(i);
+			String id = node.getAttribute("id");
+			String executable = xPath.evaluate("script", node);
+			unOrderedNodes.put(id, new Process(id, executable));
+		}
+
 		return unOrderedNodes;
 	}
 
-	private static List<Process> populateSubProcesses(Document doc, XPath xPath, String query) throws Exception {
-		List<Process> unOrderedSubProcesses = new ArrayList<Process>();
+	private static Process populateProcess(Document doc, XPath xPath, Element node) throws Exception {
+		Process result = new Process();
 
-		NodeList nodeList = (NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET);
+		// read main process id
+		String mainId = node.getAttribute("id");
+		result.Id = mainId;
+
+		// read starting node id
+		NodeList nodeList = node.getElementsByTagName("startEvent");
+		result.StartNodeId = ((Element) nodeList.item(0)).getAttribute("id");
+
+		// read ending node id
+		nodeList = node.getElementsByTagName("endEvent");
+		result.EndNodeId = ((Element) nodeList.item(0)).getAttribute("id");
+		
+		//set main node parallel
+		result.IsParallel = false;
+
+		// read nodes
+		nodeList = node.getElementsByTagName("scriptTask");
+		HashMap<String, Process> unOrderedNodes = populateNodes(nodeList, xPath);
+
+		result.SubProcesses = new ArrayList<Process>();
+		// read sub processes
+		nodeList = node.getElementsByTagName("subProcess");
 		for (int i = 0; i < nodeList.getLength(); i++) {
-			Element node = (Element) nodeList.item(i);
-
-			String id = node.getAttribute("id");
-			Process process = new Process(id,
-					node.getElementsByTagName("multiInstanceLoopCharacteristics").getLength() > 0);
-
-			NodeList innerNodeList = node.getElementsByTagName("scriptTask");
-			HashMap<String, Process> unOrderedNodes = convertNodeListtoListofCodeActionNode(innerNodeList, xPath);
-
-			// NodeList orderNodeList =
-			// node.getElementsByTagName("sequenceFlow");
-			// process.SubProcesses = orderNodes(unOrderedNodes, "", "",
-			// orderNodeList);
-			process.SubProcesses = new ArrayList<Process>(unOrderedNodes.values());
-
-			unOrderedSubProcesses.add(process);
-
+			Element pn = (Element) nodeList.item(i);
+			Process innerProcess = populateProcess(doc, xPath, pn);
+			innerProcess.IsParallel = pn.getElementsByTagName("multiInstanceLoopCharacteristics").getLength() > 0;
+			unOrderedNodes.put(innerProcess.Id, innerProcess);
+			result.SubProcesses.add(innerProcess);
 		}
 
-		return unOrderedSubProcesses;
+		// order items
+		NodeList orderNodeList = node.getElementsByTagName("sequenceFlow");
+		List<Process> orderedNodes = orderNodes(unOrderedNodes, result.StartNodeId, result.EndNodeId, orderNodeList);
+		result.SubProcesses = orderedNodes;
+
+		return result;
 	}
 
 	public static Process getFromXml(String xml) throws Exception {
@@ -98,53 +105,27 @@ public class ProcessfromXML {
 		// Init the xpath factory
 		XPath xPath = XPathFactory.newInstance().newXPath();
 
-		// read mainprocess id
 		NodeList nodeList = (NodeList) xPath.compile("/definitions/process").evaluate(doc, XPathConstants.NODESET);
-		String mainId = ((Element) nodeList.item(0)).getAttribute("id");
+		return populateProcess(doc, xPath, ((Element) nodeList.item(0)));
+	}
 
-		Process result = new Process(mainId, false);
-
-		// read starting node id
-		nodeList = (NodeList) xPath.compile("/definitions/process/startEvent").evaluate(doc, XPathConstants.NODESET);
-		result.StartNodeId = ((Element) nodeList.item(0)).getAttribute("id");
-
-		// read ending node id
-		nodeList = (NodeList) xPath.compile("/definitions/process/endEvent").evaluate(doc, XPathConstants.NODESET);
-		result.EndNodeId = ((Element) nodeList.item(0)).getAttribute("id");
-
-		// read nodes
-		HashMap<String, Process> unOrderedNodes = populateNodes(doc, xPath, "/definitions/process/scriptTask");
-
-		// read sub processes
-		List<Process> unOrderedSubProcesses = populateSubProcesses(doc, xPath, "/definitions/process/subProcess");
-		for (Process process : unOrderedSubProcesses) {
-			unOrderedNodes.put(process.Id, process);
+	private static void dumpProcess(Process input) {
+		if (input != null) {
+			if (input.Executable == null)
+				System.out.println(input.Id + ":" + input.IsParallel);
+			else
+				System.out.println(input.Id + ":" + input.Executable);
+			for (Process process : input.SubProcesses) {
+				dumpProcess(process);
+			}
 		}
-
-		// order items
-		NodeList orderNodeList = (NodeList) xPath.compile("/definitions/process/sequenceFlow").evaluate(doc,
-				XPathConstants.NODESET);
-		List<Process> orderedNodes = orderNodes(unOrderedNodes, result.StartNodeId, result.EndNodeId, orderNodeList);
-		result.SubProcesses = orderedNodes;
-
-		return result;
 	}
 
 	public static void main(String[] args) throws Exception {
 		String content;
 		content = new String(Files.readAllBytes(Paths.get("D:\\StringProcessor.bpmn")));
 		Process result = ProcessfromXML.getFromXml(content);
-		System.out.println("Process of:" + result.Id + ":IsParallel:" + result.IsParallel);
-		for (Process sp : result.SubProcesses) {
-			if (sp.isCodeActionNode()) {
-				System.out.println("Node:" + sp.Id + ":" + sp.Executable);
-			} else {
-				System.out.println("Process of:" + sp.Id + ":IsParallel:" + sp.IsParallel);
-				for (Process node : sp.SubProcesses) {
-					System.out.println(node.Id + ":" + node.Executable);
-				}
-			}
-		}
+		dumpProcess(result);
 	}
 
 }
