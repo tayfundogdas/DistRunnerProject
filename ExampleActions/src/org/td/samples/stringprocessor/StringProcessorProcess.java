@@ -1,15 +1,13 @@
 package org.td.samples.stringprocessor;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
-
 import org.td.processmodel.CodeAction;
-import org.td.typesystem.TypeConverter;
-import org.td.typesystem.TypeConverter.TypeCode;
 
 //from ProcessNodesfromXMLoperation some execution model created
 //like below
-public class StringProcessorProcess implements CodeAction {
+public class StringProcessorProcess implements CodeAction<String, Hashtable<String, Integer>> {
 	private static List<CodeAction> ProcessTree = new ArrayList<CodeAction>();
 
 	// for test only!! normally it will be created from
@@ -21,11 +19,10 @@ public class StringProcessorProcess implements CodeAction {
 	}
 
 	@Override
-	public List<Byte> Execute(List<Byte> input) throws Exception {
-
+	public Hashtable<String, Integer> Execute(String input) throws Exception {
 		InitProcessTree();
 
-		List<Byte> currInput = null;
+		Object currInput = null;
 		CodeAction currAction = null;
 		for (int i = 0; i < ProcessTree.size(); ++i) {
 			if (i == 0)
@@ -36,23 +33,22 @@ public class StringProcessorProcess implements CodeAction {
 			}
 		}
 
-		return currInput;
+		return (Hashtable<String, Integer>) currInput;
 	}
 
 	@Override
-	public Boolean ValidateInput(List<Byte> input) throws Exception {
+	public Boolean ValidateInput(String input) throws Exception {
 		return true;
 	}
 
 	// test method
 	public static void main(String[] args) throws Exception {
 		CodeAction process = new StringProcessorProcess();
-		List<Byte> firstInput = TypeConverter.toBytes("https://en.wikipedia.org/wiki/Java", TypeCode.STRING);
-		List<Byte> finalOutput = process.Execute(firstInput);
+		Object firstInput = "https://en.wikipedia.org/wiki/Java";
+		Object finalOutput = process.Execute(firstInput);
 		if (finalOutput == null)
 			System.out.println("Finished with no result");
 		else
-			System.out.println((String) TypeConverter.fromBytes(finalOutput, TypeCode.STRING));
+			System.out.println(finalOutput);
 	}
-
 }

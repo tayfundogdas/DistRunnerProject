@@ -32,11 +32,12 @@ public class MasterWorkSchedulingJob {
 		}
 	}
 
-	private static void assignSinglejob(ProcessModel currProcess, String waitingClientId) {
+	private static void assignSinglejob(ProcessModel currProcess) {
 		ClientModel leastUsedClient = getLeastUsedNode();
+
 		if (leastUsedClient == null) {
 			// if no available node found
-			LogHelper.logTrace("No node to schedule for:" + currProcess + ",WaitedBy:" + waitingClientId);
+			LogHelper.logTrace("No node to schedule for:" + currProcess);
 		} else {
 			// if available node found
 
@@ -44,31 +45,56 @@ public class MasterWorkSchedulingJob {
 			ClientJobModel clientJob = new ClientJobModel();
 			clientJob.Id = currProcess.CorrelationId + "_" + currProcess.Id;
 			clientJob.AssignedClientId = leastUsedClient.Id;
-			clientJob.jobContent = null;
-			clientJob.WaitingClientId = waitingClientId;
+			clientJob.JobName = currProcess.Executable;
+			clientJob.WaitingClientId = "";
 			// put job to the job table
 			InMemoryObjects.clientsJobs.put(clientJob.Id, clientJob);
 			// increment client job count
 			leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
+		}
+	}
 
-			LogHelper.logTrace("Assigned job info:" + clientJob + ",on client:" + leastUsedClient);
+	private static void markWaitingNodes(HashMap<String, String> relations, String correlationId) {
+		// try get waiting client id from lookup table
+		for (String from : relations.keySet()) {
+			ClientJobModel fromClient = InMemoryObjects.clientsJobs.get(correlationId + "_" + from);
+
+			if (fromClient != null) {
+				ClientJobModel toClient = InMemoryObjects.clientsJobs.get(correlationId + "_" + relations.get(from));
+				if (toClient != null) {
+					fromClient.WaitingClientId = toClient.AssignedClientId;
+				}
+			}
+		}
+	}
+
+	//TODO:Test with multi sub process with inner processes examples
+	private static void replaceSubProcessRelation(HashMap<String, String> relations, ProcessModel subProcess) {
+		//if sub process only the process with no start stop point
+		if (subProcess.RelationTable.size() == 0 && subProcess.StartNodeId == null
+				&& subProcess.SubProcesses.size() > 0) {
+			for (String from : relations.keySet()) {
+				if (relations.get(from).equals(subProcess.Id))
+					relations.put(from, subProcess.SubProcesses.get(0).Id);
+			}
 		}
 	}
 
 	private static void assignCompoundjob(List<ProcessModel> processList, HashMap<String, String> relations,
 			String correlationId) {
-		String waitingClientId = "";
 		for (ProcessModel innerProcess : processList) {
 			innerProcess.CorrelationId = correlationId;
 			if (innerProcess.Executable == null) {
 				// compound node
+				replaceSubProcessRelation(relations, innerProcess);
 				assignCompoundjob(innerProcess.SubProcesses, innerProcess.RelationTable, correlationId);
 			} else {
 				// action node
-				waitingClientId = relations.get(innerProcess.Id);
-				assignSinglejob(innerProcess, waitingClientId);
+				assignSinglejob(innerProcess);
 			}
 		}
+
+		markWaitingNodes(relations, correlationId);
 	}
 
 	// schedule process' all items to least used working nodes by pre-allocating
@@ -79,6 +105,7 @@ public class MasterWorkSchedulingJob {
 		process.CorrelationId = correlationId;
 		// assign all nodes of process
 		assignCompoundjob(process.SubProcesses, process.RelationTable, correlationId);
+		LogHelper.logTrace(InMemoryObjects.clientsJobs);
 	}
 
 	// if a result come from assigned node schedule send result to waiting node

@@ -1,13 +1,11 @@
 package org.td.distrunner.model;
 
-import org.td.processmodel.CodeAction;
-
 import com.google.gson.Gson;
 
 public class ClientJobModel {
 	public String Id;
 	public String AssignedClientId;
-	public CodeAction jobContent;
+	public String JobName;
 	public String WaitingClientId;
 	
 	@Override

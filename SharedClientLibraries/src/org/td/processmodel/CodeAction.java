@@ -1,11 +1,9 @@
 package org.td.processmodel;
 
-import java.util.List;
+public interface CodeAction<I, O> {
 
-public interface CodeAction {
+	public O Execute(I input) throws Exception;
 
-	public List<Byte> Execute(List<Byte> input) throws Exception;
-
-	public Boolean ValidateInput(List<Byte> input) throws Exception;
+	public Boolean ValidateInput(I input) throws Exception;
 
 }

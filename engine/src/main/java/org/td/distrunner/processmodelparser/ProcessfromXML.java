@@ -100,7 +100,7 @@ public class ProcessfromXML {
 		String content;
 		content = new String(Files.readAllBytes(Paths.get("D:\\StringProcessor.bpmn")));
 		ProcessModel result = ProcessfromXML.getFromXml(content);
-		LogHelper.logTrace(result.toString());
+		LogHelper.logTrace(result);
 	}
 
 }
