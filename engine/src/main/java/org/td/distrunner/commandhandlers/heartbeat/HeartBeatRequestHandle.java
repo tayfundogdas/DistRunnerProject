@@ -18,11 +18,12 @@ public class HeartBeatRequestHandle implements IRequestHandler {
 		} else // new
 		{
 			StringBuilder rawAddress = new StringBuilder((String) message.MessageObject);
-			String clientAddress = rawAddress.substring(rawAddress.indexOf("@")).toString();
+			String clientAddress = rawAddress.substring(rawAddress.indexOf("@") + 1).toString();
 			ClientModel client = new ClientModel();
 			client.Id = clientUniqueId;
 			client.Address = clientAddress;
 			client.lastHeartBeat = DateTime.now().toString();
+			client.JobCount = 0;
 			InMemoryObjects.clients.put(clientUniqueId, client);
 		}
 

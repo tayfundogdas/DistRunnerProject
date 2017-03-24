@@ -13,41 +13,33 @@
              xmlns:tns="http://www.jboss.org/drools">
 
   <itemDefinition id="_jbpm-unique-4_multiInstanceItemType" />
-  <itemDefinition id="_jbpm-unique-4_multiInstanceItemType" />
-
   <process processType="Private" isExecutable="true" id="org.td.samples.StringProcessor" name="String Processor" tns:packageName="defaultPackage" >
 
     <!-- nodes -->
     <startEvent id="_1"  isInterrupting="true">
     </startEvent>
-    <endEvent id="_3" >
-        <terminateEventDefinition />
-    </endEvent>
     <scriptTask id="_jbpm-unique-2" name="Download Article" >
       <script>DownloadArticleAction</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-3" name="Tokenize Words" >
-      <script></script>
+      <script>TokenizeWordsAction</script>
     </scriptTask>
-    <subProcess id="_jbpm-unique-4" name="Run on parallel nodes"  >
-      <ioSpecification>
-        <inputSet/>
-        <outputSet/>
-      </ioSpecification>
-      <multiInstanceLoopCharacteristics>
-        <loopDataInputRef>_jbpm-unique-4_input</loopDataInputRef>
-      </multiInstanceLoopCharacteristics>
+    <endEvent id="_3" >
+        <terminateEventDefinition />
+    </endEvent>
+    <subProcess id="_jbpm-unique-4" name="Run on parallel nodes" >
     <!-- nodes -->
-    <scriptTask id="_jbpm-unique-13" name="Calculate Words Counts" >
+    <scriptTask id="_jbpm-unique-6" name="Calculate Words Counts" >
+      <script>CalculateWordsCountsAction</script>
     </scriptTask>
 
     <!-- connections -->
     </subProcess>
 
     <!-- connections -->
-    <sequenceFlow id="_jbpm-unique-4-_3" sourceRef="_jbpm-unique-4" targetRef="_3" />
     <sequenceFlow id="_1-_jbpm-unique-2" sourceRef="_1" targetRef="_jbpm-unique-2" />
     <sequenceFlow id="_jbpm-unique-2-_jbpm-unique-3" sourceRef="_jbpm-unique-2" targetRef="_jbpm-unique-3" />
+    <sequenceFlow id="_jbpm-unique-4-_3" sourceRef="_jbpm-unique-4" targetRef="_3" />
     <sequenceFlow id="_jbpm-unique-3-_jbpm-unique-4" sourceRef="_jbpm-unique-3" targetRef="_jbpm-unique-4" />
 
   </process>
@@ -55,38 +47,38 @@
   <bpmndi:BPMNDiagram>
     <bpmndi:BPMNPlane bpmnElement="org.td.samples.StringProcessor" >
       <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="160" y="0" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_3" >
-        <dc:Bounds x="167" y="333" width="48" height="48" />
+        <dc:Bounds x="270" y="-4" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-2" >
-        <dc:Bounds x="109" y="70" width="157" height="48" />
+        <dc:Bounds x="215" y="66" width="157" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-3" >
-        <dc:Bounds x="109" y="139" width="157" height="48" />
+        <dc:Bounds x="217" y="137" width="157" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" >
+        <dc:Bounds x="273" y="340" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-4" >
-        <dc:Bounds x="90" y="209" width="200" height="98" />
+        <dc:Bounds x="195" y="209" width="200" height="92" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-13" >
-        <dc:Bounds x="109" y="242" width="157" height="48" />
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-6" >
+        <dc:Bounds x="217" y="233" width="148" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-4-_3" >
-        <di:waypoint x="190" y="258" />
-        <di:waypoint x="191" y="357" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-2" >
-        <di:waypoint x="184" y="24" />
-        <di:waypoint x="187" y="94" />
+        <di:waypoint x="294" y="20" />
+        <di:waypoint x="293" y="90" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-2-_jbpm-unique-3" >
-        <di:waypoint x="187" y="94" />
-        <di:waypoint x="187" y="163" />
+        <di:waypoint x="293" y="90" />
+        <di:waypoint x="295" y="161" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-4-_3" >
+        <di:waypoint x="295" y="255" />
+        <di:waypoint x="297" y="364" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-3-_jbpm-unique-4" >
-        <di:waypoint x="187" y="163" />
-        <di:waypoint x="190" y="258" />
+        <di:waypoint x="295" y="161" />
+        <di:waypoint x="295" y="255" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

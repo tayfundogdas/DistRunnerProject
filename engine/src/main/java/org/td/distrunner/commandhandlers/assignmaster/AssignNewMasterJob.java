@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.model.JobCountModel;
+import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.wsrelated.WebSocketClientChannel;
@@ -23,7 +23,7 @@ public class AssignNewMasterJob {
 	public static void broadcastNewMasterMessagetoNodes() {
 		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 		long delay = 0;
-		JobCountModel myJobCount = InMemoryObjects.clientJobsCount.get(InMemoryObjects.AppId);
+		ClientModel myJobCount = InMemoryObjects.clients.get(InMemoryObjects.AppId);
 		if (myJobCount == null || myJobCount.JobCount <= 0)
 			delay = AppSettings.MasterRequestWaitTimeConstant;
 		else

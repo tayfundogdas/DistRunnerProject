@@ -1,16 +1,19 @@
 package org.td.distrunner.model;
 
+import org.td.processmodel.CodeAction;
+
 import com.google.gson.Gson;
 
-public class ClientModel {
+public class ClientJobModel {
 	public String Id;
-	public String lastHeartBeat;
-	public String Address;
-	public Integer JobCount;
+	public String AssignedClientId;
+	public CodeAction jobContent;
+	public String WaitingClientId;
 	
 	@Override
 	public String toString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
+	
 }

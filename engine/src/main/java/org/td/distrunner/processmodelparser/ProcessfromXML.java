@@ -3,14 +3,14 @@ package org.td.distrunner.processmodelparser;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.model.ProcessModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -27,76 +27,61 @@ public class ProcessfromXML {
 		return result;
 	}
 
-	private static List<Process> orderNodes(HashMap<String, Process> unOrderedNodes, String startId, String endId,
-			NodeList orderNodeList) throws Exception {
-		List<Process> orderedNodes = new ArrayList<Process>();
-		HashMap<String, String> orderTable = getRelationTable(orderNodeList);
-
-		String currSource = orderTable.get(startId);
-
-		for (int i = 0; i < unOrderedNodes.size(); ++i) {
-			Process currNode = unOrderedNodes.get(currSource);
-			orderedNodes.add(currNode);
-			currSource = orderTable.get(currSource);
-		}
-
-		return orderedNodes;
-	}
-
-	private static HashMap<String, Process> populateNodes(NodeList rawNodes, XPath xPath) throws Exception {
-		HashMap<String, Process> unOrderedNodes = new HashMap<String, Process>();
+	private static HashMap<String, ProcessModel> populateNodes(NodeList rawNodes, XPath xPath) throws Exception {
+		HashMap<String, ProcessModel> unOrderedNodes = new HashMap<String, ProcessModel>();
 		for (int i = 0; i < rawNodes.getLength(); i++) {
 			Element node = (Element) rawNodes.item(i);
 			String id = node.getAttribute("id");
 			String executable = xPath.evaluate("script", node);
-			unOrderedNodes.put(id, new Process(id, executable));
+			unOrderedNodes.put(id, new ProcessModel(id, executable));
 		}
 
 		return unOrderedNodes;
 	}
 
-	private static Process populateProcess(Document doc, XPath xPath, Element node) throws Exception {
-		Process result = new Process();
-
-		// read main process id
-		String mainId = node.getAttribute("id");
-		result.Id = mainId;
+	private static ProcessModel populateProcess(Document doc, XPath xPath, String rootPath) throws Exception {
+		ProcessModel result = new ProcessModel();
+		// read process id
+		NodeList nodeList = (NodeList) xPath.compile(rootPath).evaluate(doc, XPathConstants.NODESET);
+		Element currentItem = ((Element) nodeList.item(0));
+		result.Id = currentItem.getAttribute("id");
 
 		// read starting node id
-		NodeList nodeList = node.getElementsByTagName("startEvent");
-		result.StartNodeId = ((Element) nodeList.item(0)).getAttribute("id");
+		nodeList = (NodeList) xPath.compile(rootPath + "/startEvent").evaluate(doc, XPathConstants.NODESET);
+		currentItem = ((Element) nodeList.item(0));
+		if (currentItem != null)
+			result.StartNodeId = currentItem.getAttribute("id");
 
 		// read ending node id
-		nodeList = node.getElementsByTagName("endEvent");
-		result.EndNodeId = ((Element) nodeList.item(0)).getAttribute("id");
-		
-		//set main node parallel
-		result.IsParallel = false;
+		nodeList = (NodeList) xPath.compile(rootPath + "/endEvent").evaluate(doc, XPathConstants.NODESET);
+		currentItem = ((Element) nodeList.item(0));
+		if (currentItem != null)
+			result.EndNodeId = currentItem.getAttribute("id");
 
 		// read nodes
-		nodeList = node.getElementsByTagName("scriptTask");
-		HashMap<String, Process> unOrderedNodes = populateNodes(nodeList, xPath);
+		nodeList = (NodeList) xPath.compile(rootPath + "/scriptTask").evaluate(doc, XPathConstants.NODESET);
+		HashMap<String, ProcessModel> unOrderedNodes = populateNodes(nodeList, xPath);
+		result.SubProcesses.addAll(unOrderedNodes.values());
 
-		result.SubProcesses = new ArrayList<Process>();
 		// read sub processes
-		nodeList = node.getElementsByTagName("subProcess");
+		nodeList = (NodeList) xPath.compile(rootPath + "/subProcess").evaluate(doc, XPathConstants.NODESET);
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element pn = (Element) nodeList.item(i);
-			Process innerProcess = populateProcess(doc, xPath, pn);
-			innerProcess.IsParallel = pn.getElementsByTagName("multiInstanceLoopCharacteristics").getLength() > 0;
+			String id = pn.getAttribute("id");
+			ProcessModel innerProcess = populateProcess(doc, xPath, rootPath + "/subProcess[@id='" + id + "']");
 			unOrderedNodes.put(innerProcess.Id, innerProcess);
 			result.SubProcesses.add(innerProcess);
 		}
 
-		// order items
-		NodeList orderNodeList = node.getElementsByTagName("sequenceFlow");
-		List<Process> orderedNodes = orderNodes(unOrderedNodes, result.StartNodeId, result.EndNodeId, orderNodeList);
-		result.SubProcesses = orderedNodes;
+		// items order table
+		NodeList orderNodeList = (NodeList) xPath.compile(rootPath + "/sequenceFlow").evaluate(doc,
+				XPathConstants.NODESET);
+		result.RelationTable = getRelationTable(orderNodeList);
 
 		return result;
 	}
 
-	public static Process getFromXml(String xml) throws Exception {
+	public static ProcessModel getFromXml(String xml) throws Exception {
 		// Init xml document
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -105,27 +90,17 @@ public class ProcessfromXML {
 		// Init the xpath factory
 		XPath xPath = XPathFactory.newInstance().newXPath();
 
-		NodeList nodeList = (NodeList) xPath.compile("/definitions/process").evaluate(doc, XPathConstants.NODESET);
-		return populateProcess(doc, xPath, ((Element) nodeList.item(0)));
-	}
-
-	private static void dumpProcess(Process input) {
-		if (input != null) {
-			if (input.Executable == null)
-				System.out.println(input.Id + ":" + input.IsParallel);
-			else
-				System.out.println(input.Id + ":" + input.Executable);
-			for (Process process : input.SubProcesses) {
-				dumpProcess(process);
-			}
-		}
+		return populateProcess(doc, xPath, "/definitions/process");
 	}
 
 	public static void main(String[] args) throws Exception {
+		// for logging
+		LogHelper.setupLog();
+
 		String content;
 		content = new String(Files.readAllBytes(Paths.get("D:\\StringProcessor.bpmn")));
-		Process result = ProcessfromXML.getFromXml(content);
-		dumpProcess(result);
+		ProcessModel result = ProcessfromXML.getFromXml(content);
+		LogHelper.logTrace(result.toString());
 	}
 
 }

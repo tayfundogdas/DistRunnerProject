@@ -6,19 +6,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import org.td.distrunner.model.ClientModel;
-import org.td.distrunner.model.JobCountModel;
-import org.td.distrunner.model.JobModel;
+import org.td.distrunner.model.ProcessModel;
+import org.td.distrunner.model.ClientJobModel;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class InMemoryObjects {
+	// active submitted process list
+	public static ConcurrentHashMap<String, ProcessModel> processes = new ConcurrentHashMap<String, ProcessModel>();
 	// active live client list key is client id
 	public static ConcurrentHashMap<String, ClientModel> clients = new ConcurrentHashMap<String, ClientModel>();
 	// key is job id
-	public static ConcurrentHashMap<String, JobModel> jobs = new ConcurrentHashMap<String, JobModel>();
-	// key is client id and value is job count on client
-	public static ConcurrentHashMap<String, JobCountModel> clientJobsCount = new ConcurrentHashMap<String, JobCountModel>();
+	public static ConcurrentHashMap<String, ClientJobModel> clientsJobs = new ConcurrentHashMap<String, ClientJobModel>();
 	//heart beat failure count for starting 0
 	public static Byte heartBeatFailCount = 0;
 	//unique client id
@@ -28,8 +28,7 @@ public class InMemoryObjects {
 		List<String> transwerObj = new ArrayList<String>();
 		Gson gson = new Gson();
 		transwerObj.add(gson.toJson(clients.values()));
-		transwerObj.add(gson.toJson(jobs.values()));
-		transwerObj.add(gson.toJson(clientJobsCount.values()));
+		transwerObj.add(gson.toJson(clientsJobs.values()));
 		
 		return transwerObj;
 	}
@@ -43,18 +42,11 @@ public class InMemoryObjects {
 				clients.put(x.Id, x);
 		});
 		
-		listType = new TypeToken<Collection<JobModel>>(){}.getType();
-		Collection<JobModel> jobList = gson.fromJson(data.get(1), listType);
+		listType = new TypeToken<Collection<ClientJobModel>>(){}.getType();
+		Collection<ClientJobModel> jobList = gson.fromJson(data.get(1), listType);
 		jobList.forEach(x ->  {
-			if (!jobs.containsKey(x.Id))
-				jobs.put(x.Id, x);
-		});
-		
-		listType = new TypeToken<Collection<JobCountModel>>(){}.getType();
-		Collection<JobCountModel> jobcountList = gson.fromJson(data.get(2), listType);
-		jobcountList.forEach(x ->  {
-			if (!clientJobsCount.containsKey(x.Id))
-				clientJobsCount.put(x.Id, x);
+			if (!clientsJobs.containsKey(x.Id))
+				clientsJobs.put(x.Id, x);
 		});
 	}
 }
