@@ -31,6 +31,7 @@ public class MasterWorkSchedulingJob {
 		}
 	}
 
+	//after handleJobResult
 	private static void advanceProcess(String correlationId) {
 		// get process and check if its exist
 		ProcessModel currProcess = InMemoryObjects.processes.get(correlationId);

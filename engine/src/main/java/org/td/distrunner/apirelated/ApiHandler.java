@@ -1,6 +1,5 @@
 package org.td.distrunner.apirelated;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,15 +13,14 @@ public class ApiHandler extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		response.setContentType("text/html;charset=utf-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-
 		String path = request.getPathInfo();
 
 		switch (path) {
 		case "/ClientList":
-			ClientListOperation.printClientList(response.getWriter());
+			ClientListOperation.printClientList(response);
+			break;
+		case "/UploadProcess":
+			UploadProcessOperation.HandleUpload(request, response);
 			break;
 		default:
 			response.getWriter().println("<h1>Hello World</h1>");
@@ -32,14 +30,15 @@ public class ApiHandler extends HttpServlet {
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		String path = request.getPathInfo();
 
-		StringBuffer jb = new StringBuffer();
-		String line = null;
-		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null)
-				jb.append(line);
-		} catch (Exception e) {
-			/* report an error */ }
+		switch (path) {
+		case "/UploadProcess":
+			UploadProcessOperation.HandleUpload(request, response);
+			break;
+		default:
+			response.getWriter().println("<h1>Hello World</h1>");
+			break;
+		}
 	}
 }
