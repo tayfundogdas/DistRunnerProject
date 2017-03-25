@@ -6,7 +6,6 @@ public class ClientJobModel {
 	public String Id;
 	public String AssignedClientId;
 	public String JobName;
-	public String WaitingClientId;
 	
 	@Override
 	public String toString() {

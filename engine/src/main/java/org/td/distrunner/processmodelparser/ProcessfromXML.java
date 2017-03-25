@@ -61,7 +61,7 @@ public class ProcessfromXML {
 		// read nodes
 		nodeList = (NodeList) xPath.compile(rootPath + "/scriptTask").evaluate(doc, XPathConstants.NODESET);
 		HashMap<String, ProcessModel> unOrderedNodes = populateNodes(nodeList, xPath);
-		result.SubProcesses.addAll(unOrderedNodes.values());
+		result.SubProcesses = unOrderedNodes;
 
 		// read sub processes
 		nodeList = (NodeList) xPath.compile(rootPath + "/subProcess").evaluate(doc, XPathConstants.NODESET);
@@ -69,8 +69,7 @@ public class ProcessfromXML {
 			Element pn = (Element) nodeList.item(i);
 			String id = pn.getAttribute("id");
 			ProcessModel innerProcess = populateProcess(doc, xPath, rootPath + "/subProcess[@id='" + id + "']");
-			unOrderedNodes.put(innerProcess.Id, innerProcess);
-			result.SubProcesses.add(innerProcess);
+			result.SubProcesses.put(innerProcess.Id, innerProcess);
 		}
 
 		// items order table
