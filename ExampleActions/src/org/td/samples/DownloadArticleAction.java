@@ -1,4 +1,4 @@
-package org.td.samples.stringprocessor;
+package org.td.samples;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

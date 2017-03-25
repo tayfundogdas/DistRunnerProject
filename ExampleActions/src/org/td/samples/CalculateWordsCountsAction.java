@@ -1,4 +1,4 @@
-package org.td.samples.stringprocessor;
+package org.td.samples;
 
 import java.util.Hashtable;
 import java.util.List;
