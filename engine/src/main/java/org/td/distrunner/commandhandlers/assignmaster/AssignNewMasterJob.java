@@ -32,10 +32,10 @@ public class AssignNewMasterJob {
 		broadcastNewMasterMessagetoNodeshandle = scheduler.schedule(new Runnable() {
 			public void run() {
 				InMemoryObjects.clients.forEach(Runtime.getRuntime().availableProcessors(), (clientId, client) -> {
-					Message mess = new Message();
+					Message<String> mess = new Message<String>();
 					mess.MessageType = MessageTypes.NewMasterMessage;
 					// send my ip as new master address
-					mess.MessageObject = InMemoryObjects.clients.get(InMemoryObjects.AppId).Address;
+					mess.MessageContent = InMemoryObjects.clients.get(InMemoryObjects.AppId).Address;
 					try {
 						WebSocketClientChannel.sendMessagetoAddress(mess, client.Address);
 					} catch (Exception e) 

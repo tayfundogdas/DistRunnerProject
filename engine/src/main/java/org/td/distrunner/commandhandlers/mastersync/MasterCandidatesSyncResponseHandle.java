@@ -6,12 +6,11 @@ import org.td.distrunner.commandhandlers.IRequestHandler;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.model.Message;
 
-public class MasterCandidatesSyncResponseHandle implements IRequestHandler {
+public class MasterCandidatesSyncResponseHandle implements IRequestHandler<List<String>, Object> {
 
 	@Override
-	public Message handle(Message message) {
-		@SuppressWarnings("unchecked")
-		List<String> data = (List<String>) message.MessageObject;
+	public Message<Object> handle(Message<List<String>> message) {
+		List<String> data = message.MessageContent;
 		InMemoryObjects.setSynchronizeData(data);
 
 		return null;

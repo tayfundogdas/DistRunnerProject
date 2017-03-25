@@ -15,6 +15,7 @@ import org.td.samples.TokenizeWordsAction;
 
 public class StringProcessorTest implements CodeAction<String, Hashtable<String, Integer>> {
 
+	@SuppressWarnings("rawtypes")
 	private List<CodeAction> ProcessTree = new ArrayList<CodeAction>();
 
 	@Before
@@ -29,6 +30,7 @@ public class StringProcessorTest implements CodeAction<String, Hashtable<String,
 		ProcessTree.clear();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Hashtable<String, Integer> Execute(String input) throws Exception {
 		Object currInput = null;

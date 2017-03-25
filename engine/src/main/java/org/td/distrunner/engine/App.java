@@ -2,10 +2,6 @@ package org.td.distrunner.engine;
 
 import java.util.UUID;
 
-/**
- * Hello world!
- *
- */
 public class App {
 	
 

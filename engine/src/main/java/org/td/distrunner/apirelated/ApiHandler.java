@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.td.distrunner.commandhandlers.workschedule.MasterWorkSchedulingJob;
+import org.td.distrunner.engine.LogHelper;
+
 public class ApiHandler extends HttpServlet {
 
 	private static final long serialVersionUID = -2009821448033352521L;
@@ -22,8 +25,16 @@ public class ApiHandler extends HttpServlet {
 		case "/UploadProcess":
 			UploadProcessOperation.HandleUpload(request, response);
 			break;
+		case "/StartProcess":
+			try {
+				String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor");
+				response.getWriter().print(correlationId);
+			} catch (Exception e) {
+				LogHelper.logError(e);
+			}
+			break;
 		default:
-			response.getWriter().println("<h1>Hello World</h1>");
+			response.getWriter().print("<h1>Hello World</h1>");
 			break;
 		}
 	}
@@ -37,7 +48,7 @@ public class ApiHandler extends HttpServlet {
 			UploadProcessOperation.HandleUpload(request, response);
 			break;
 		default:
-			response.getWriter().println("<h1>Hello World</h1>");
+			response.getWriter().print("<h1>Hello World</h1>");
 			break;
 		}
 	}

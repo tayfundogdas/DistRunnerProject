@@ -13,7 +13,7 @@ public class MasterCandidatesSyncRequestJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		Message mess = new Message();
+		Message<Object> mess = new Message<Object>();
 		mess.MessageType = MessageTypes.MasterSyncRequestMessage;
 		try {
 			WebSocketClientChannel.sendMessagetoMaster(mess);

@@ -2,17 +2,16 @@ package org.td.distrunner.wsrelated;
 
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
-import org.td.distrunner.engine.EnableLogging;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 
 public class WebSocketServerChannel extends WebSocketAdapter {
 
 	@Override
-	@EnableLogging
 	public void onWebSocketText(String message) {
 		super.onWebSocketText(message);
 		// process request message and send response
+		@SuppressWarnings("rawtypes")
 		Message response = MessageDispatcher.HandleMessage(message,
 				prepareRemoteAddress(super.getSession().getRemoteAddress().toString()));
 		handleResponseMessage(response);
@@ -25,10 +24,10 @@ public class WebSocketServerChannel extends WebSocketAdapter {
 		return incomimgAddress.toString();
 	}
 
-	private void handleResponseMessage(Message response) {
+	private void handleResponseMessage(@SuppressWarnings("rawtypes") Message response) {
 		if (response != null) {
 			try {
-				super.getSession().getRemote().sendString(response.getJsonForm());
+				super.getSession().getRemote().sendString(response.toString());
 			} catch (Exception e) {
 				LogHelper.logError(e);
 			}

@@ -10,7 +10,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.td.distrunner.model.AppSettings;
+import org.td.distrunner.model.ProcessModel;
 import org.td.distrunner.processmodelparser.JarHelper;
+
+import com.google.gson.Gson;
 
 public class UploadProcessOperation {
 
@@ -84,7 +87,9 @@ public class UploadProcessOperation {
 					// parse process file
 					String processXML = null;
 					try {
-						processXML = JarHelper.loadProcessAndReturnXML(file);
+						ProcessModel process = JarHelper.getProcessByName(fileName.replace(".jar", ""));
+						Gson gson = new Gson();
+						processXML = gson.toJson(process);
 					} catch (Exception e) {
 						file.delete();
 					}

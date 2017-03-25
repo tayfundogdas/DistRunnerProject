@@ -2,19 +2,21 @@ package org.td.distrunner.model;
 
 import com.google.gson.Gson;
 
-public class Message {
+public class Message <T> {
 
 	public int MessageType;
-	public Object MessageObject;
-
-	public String getJsonForm() {
-		Gson gson = new Gson();
-		return gson.toJson(this);
-	}
+	public T MessageContent;
 
 	@Override
 	public String toString() {
-		return getJsonForm();
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
+	
+	public static String toJsonString(Object obj)
+	{
+		Gson gson = new Gson();
+		return gson.toJson(obj);
 	}
 
 }

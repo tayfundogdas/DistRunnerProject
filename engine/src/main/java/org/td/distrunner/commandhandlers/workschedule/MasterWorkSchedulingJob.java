@@ -1,23 +1,20 @@
 package org.td.distrunner.commandhandlers.workschedule;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestHandle;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
-import org.td.distrunner.model.Message;
-import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.model.ProcessModel;
-import org.td.distrunner.processmodelparser.ProcessfromXML;
+import org.td.distrunner.processmodelparser.JarHelper;
 
 //this method try to schedule jobs as parallel as possible by examining data dependencies
 public class MasterWorkSchedulingJob {
+
+	public static final char CorrelationSeperator = '*';
 
 	private static ClientModel getLeastUsedNode() {
 		// find least used node
@@ -31,7 +28,7 @@ public class MasterWorkSchedulingJob {
 		}
 	}
 
-	//after handleJobResult
+	// after handleJobResult
 	private static void advanceProcess(String correlationId) {
 		// get process and check if its exist
 		ProcessModel currProcess = InMemoryObjects.processes.get(correlationId);
@@ -40,7 +37,9 @@ public class MasterWorkSchedulingJob {
 			return;
 		}
 
+		// look if process finished and remove from process table
 		if (currProcess.NextProcessId != null && currProcess.NextProcessId.equals(currProcess.EndNodeId)) {
+			InMemoryObjects.processes.remove(correlationId);
 			LogHelper.logTrace("Process finished");
 			LogHelper.logTrace(currProcess);
 			return;
@@ -56,12 +55,12 @@ public class MasterWorkSchedulingJob {
 			// prepare job and put job table
 			ProcessModel nextJob = currProcess.SubProcesses.get(currProcess.NextProcessId);
 			if (nextJob.Executable == null) {
-				// for sub process start it
-				correlationId = startProcess(nextJob);
+				// for sub process initialize it
+				correlationId = initProcess(nextJob, currProcess.CorrelationId);
 			} else {
 				// for single job assign to client
 				ClientJobModel clientJob = new ClientJobModel();
-				clientJob.Id = currProcess.CorrelationId + "_" + currProcess.NextProcessId;
+				clientJob.Id = currProcess.Id + CorrelationSeperator + currProcess.CorrelationId + CorrelationSeperator + currProcess.NextProcessId;
 				clientJob.AssignedClientId = leastUsedClient.Id;
 				clientJob.JobName = currProcess.SubProcesses.get(currProcess.NextProcessId).Executable;
 
@@ -80,22 +79,35 @@ public class MasterWorkSchedulingJob {
 
 	}
 
-	// start process first item and return correlationId for process
-	public static String startProcess(ProcessModel process) {
+	private static String initProcess(ProcessModel process, String upperCorrelationId) {
 		// create process unique id
-		process.CorrelationId = UUID.randomUUID().toString();
+		String correlationId = UUID.randomUUID().toString();
+		process.CorrelationId = correlationId;
+		// set id
+		process.Id = upperCorrelationId + CorrelationSeperator + process.Id + CorrelationSeperator + correlationId;
 		// put future process as after start
 		process.NextProcessId = process.RelationTable.get(process.StartNodeId);
+		// put process to global table
 		InMemoryObjects.processes.put(process.CorrelationId, process);
+		// make logging
 		LogHelper.logTrace("Process started");
 		LogHelper.logTrace(process);
+		// make ready process first item to run
+		advanceProcess(correlationId);
+		// return process correlationId to track
 		return process.CorrelationId;
+	}
+
+	// start process first item and return correlationId for process
+	public static String startProcess(String processName) throws Exception {
+		ProcessModel process = JarHelper.getProcessByName(processName);
+		return initProcess(process, "");
 	}
 
 	// if a result come from assigned node schedule send result to waiting node
 	// and report result time for suggesting better optimized blocks
 	public static void handleJobResult(String correlationId) {
-
+		advanceProcess(correlationId);
 	}
 
 	// if no heart beat from scheduled node reschedule to new node
@@ -107,26 +119,4 @@ public class MasterWorkSchedulingJob {
 		leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
 	}
 
-	public static void main(String[] args) throws Exception {
-		// for logging
-		LogHelper.setupLog();
-
-		// for setup application id
-		InMemoryObjects.AppId = UUID.randomUUID().toString();
-
-		// create mock clients
-		HeartBeatRequestHandle clientRequest = new HeartBeatRequestHandle();
-		Message heartbeatMessage = new Message();
-		heartbeatMessage.MessageType = MessageTypes.HeartBeatRequestMessage;
-		for (int i = 1; i <= 5; ++i) {
-			heartbeatMessage.MessageObject = InMemoryObjects.AppId + "@127.0.0." + i;
-			clientRequest.handle(heartbeatMessage);
-		}
-
-		String content;
-		content = new String(Files.readAllBytes(Paths.get("D:\\StringProcessor.bpmn")));
-		ProcessModel process = ProcessfromXML.getFromXml(content);
-		String correlationId = startProcess(process);
-		handleJobResult(correlationId);
-	}
 }

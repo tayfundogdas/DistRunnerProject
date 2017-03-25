@@ -15,28 +15,25 @@ import org.td.distrunner.wsrelated.WebSocketClientChannel;
 public class HeartBeatRequestJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		//if master is up send heart beat message
+		// if master is up send heart beat message
 		if (InMemoryObjects.heartBeatFailCount < AppSettings.HeartBeatTreshold) {
-			Message mess = new Message();
+			Message<String> mess = new Message<String>();
 			mess.MessageType = MessageTypes.HeartBeatRequestMessage;
-			mess.MessageObject = InMemoryObjects.AppId;
-			try
-			{
+			mess.MessageContent = InMemoryObjects.AppId;
+			try {
 				WebSocketClientChannel.sendMessagetoMaster(mess);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				InMemoryObjects.heartBeatFailCount = (byte) (InMemoryObjects.heartBeatFailCount + 1);
 				LogHelper.logError(e);
 			}
-		}
-		else //if master is down stop all jobs
+		} else // if master is down stop all jobs
 		{
 			JobRegisterHelper.cancelAllJobsIfMasterDied();
-			
-			//if this node is master candidate signal NewMasterMessage
+
+			// if this node is master candidate signal NewMasterMessage
 			if (AppSettings.IsMasterCandidate == 1) {
 				AssignNewMasterJob.broadcastNewMasterMessagetoNodes();
 			}
-		}			
-	}		
+		}
+	}
 }

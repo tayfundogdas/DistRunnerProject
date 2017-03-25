@@ -6,15 +6,15 @@ import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 
-public class NewMasterHandle implements IRequestHandler {
+public class NewMasterHandle implements IRequestHandler<String,Object> {
 
 	@Override
-	public Message handle(Message message) {
+	public Message<Object> handle(Message<String> message) {
 		// cancel waiting new master operation
 		AssignNewMasterJob.cancelMyNewMasterMessage();
 
 		// assign new master address
-		String newMasterAddress = (String) message.MessageObject;
+		String newMasterAddress = message.MessageContent;
 		AppSettings.MasterAddress = newMasterAddress;
 
 		// save app.config for changed master address

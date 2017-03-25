@@ -5,10 +5,18 @@ import java.util.concurrent.Future;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.td.distrunner.commandhandlers.MessageDispatcher;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 
 public class WebSocketClientChannel extends WebSocketAdapter {
+
+	@Override
+	public void onWebSocketText(String message) {
+		super.onWebSocketText(message);
+		// process request message and send response
+		MessageDispatcher.HandleMessage(message, AppSettings.MasterAddress);
+	}
 
 	public static String getMasterWSAddress() {
 		StringBuilder str = new StringBuilder();
@@ -24,7 +32,7 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		return str.toString();
 	}
 
-	public static void sendMessagetoMaster(Message message) throws Exception {
+	public static void sendMessagetoMaster(@SuppressWarnings("rawtypes") Message message) throws Exception {
 		String url = getMasterWSAddress();
 
 		URI uri = URI.create(url);
@@ -39,13 +47,13 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		// Wait for Connect
 		Session session = fut.get();
 		// Send a message
-		session.getRemote().sendString(message.getJsonForm());
+		session.getRemote().sendString(message.toString());
 		// Close session
 		session.close();
 		client.stop();
 	}
-	
-	public static void sendMessagetoAddress(Message message,String url) throws Exception {
+
+	public static void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url) throws Exception {
 		URI uri = URI.create(url);
 
 		WebSocketClient client = new WebSocketClient();
@@ -58,10 +66,10 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		// Wait for Connect
 		Session session = fut.get();
 		// Send a message
-		session.getRemote().sendString(message.getJsonForm());
+		session.getRemote().sendString(message.toString());
 		// Close session
 		session.close();
 		client.stop();
 	}
-	
+
 }

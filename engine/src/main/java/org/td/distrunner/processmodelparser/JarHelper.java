@@ -11,16 +11,16 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ProcessModel;
-
-import com.google.gson.Gson;
 
 public class JarHelper {
 
-	public static String loadProcessAndReturnXML(File jarFile) throws Exception {
-		String result = null;
+	public static ProcessModel getProcessByName(String processName) throws Exception {
+		ProcessModel result = null;
 
 		// jar file
+		File jarFile = new File(AppSettings.ProcessJarPath + processName + ".jar");
 		JarFile jar = new JarFile(jarFile);
 		// Getting the files from jar
 		Enumeration<? extends JarEntry> enumeration = jar.entries();
@@ -42,9 +42,7 @@ public class JarHelper {
 					sb.append(str);
 				}
 				String content = sb.toString();
-				ProcessModel process = ProcessfromXML.getFromXml(content);
-				Gson gson = new Gson();
-				result = gson.toJson(process);
+				result = ProcessfromXML.getFromXml(content);
 			}
 		}
 
@@ -57,8 +55,6 @@ public class JarHelper {
 	public static void main(String[] args) throws Exception {
 		// for logging
 		LogHelper.setupLog();
-
-		File jarFile = new File("D:\\ProcessJars\\org.td.samples.StringProcessor.jar");
-		loadProcessAndReturnXML(jarFile);
+		getProcessByName("org.td.samples.StringProcessor");
 	}
 }
