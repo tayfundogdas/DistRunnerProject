@@ -5,7 +5,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.td.distrunner.commandhandlers.workschedule.MasterWorkSchedulingJob;
 import org.td.distrunner.engine.LogHelper;
 
@@ -17,11 +16,10 @@ public class ApiHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String path = request.getPathInfo();
-		
-		//download package operation
-		if (path.indexOf("DownloadJar")!=-1)
-		{
-			response.getWriter().print(path);
+
+		// download package operation
+		if (path.indexOf("DownloadJar") != -1) {
+			DownloadJarFileOperation.writeJartoResponse(request, response);
 			return;
 		}
 
@@ -34,7 +32,9 @@ public class ApiHandler extends HttpServlet {
 			break;
 		case "/StartProcess":
 			try {
-				String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor");
+				Object firstParam = "https://en.wikipedia.org/wiki/Java";
+				String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor",
+						firstParam);
 				response.getWriter().print(correlationId);
 			} catch (Exception e) {
 				LogHelper.logError(e);
@@ -44,11 +44,10 @@ public class ApiHandler extends HttpServlet {
 			response.getWriter().print("<h1>Hello World</h1>");
 			break;
 		}
-			
+
 	}
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getPathInfo();
 
 		switch (path) {

@@ -20,10 +20,10 @@ public class ExecutionResultHandle implements IRequestHandler<String, Object> {
 		Gson gson = new Gson();
 		ExecutionResultModel reportedResult = gson.fromJson(message.MessageContent, listType);
 
-		//process advance
+		// process advance
 		String processCorrelationId = reportedResult.JobId.substring(0,
 				reportedResult.JobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator));
-		MasterWorkSchedulingJob.handleJobResult(processCorrelationId);
+		MasterWorkSchedulingJob.handleJobResult(processCorrelationId, reportedResult.ExecutionResult);
 
 		// remove reported job from client job table
 		InMemoryObjects.clientsJobs.remove(reportedResult.JobId);

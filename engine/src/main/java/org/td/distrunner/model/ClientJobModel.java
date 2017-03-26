@@ -9,6 +9,7 @@ public class ClientJobModel {
 	public String Id;
 	public String AssignedClientId;
 	public String JobName;
+	public Object JobParam;
 	
 	public static List<ClientJobModel> getClientJobByClientId(String clientId)
 	{	

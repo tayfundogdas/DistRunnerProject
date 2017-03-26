@@ -30,7 +30,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	// after handleJobResult
-	private static void advanceProcess(String correlationId) {
+	private static void advanceProcess(String correlationId, Object executionResult) {
 		// get process and check if its exist
 		ProcessModel currProcess = InMemoryObjects.processes.get(correlationId);
 		if (currProcess == null) {
@@ -55,7 +55,7 @@ public class MasterWorkSchedulingJob {
 				}
 				// finish all upper processes in order
 				for (int i = upperProcesses.size() - 2; i >= 0; --i) {
-					handleJobResult(upperProcesses.get(i));
+					handleJobResult(upperProcesses.get(i), null);
 				}
 			}
 			return;
@@ -72,13 +72,14 @@ public class MasterWorkSchedulingJob {
 			ProcessModel nextJob = currProcess.SubProcesses.get(currProcess.NextProcessId);
 			if (nextJob.Executable == null) {
 				// for sub process initialize it
-				correlationId = initProcess(nextJob, currProcess.CorrelationId);
+				correlationId = initProcess(nextJob, currProcess.CorrelationId, executionResult);
 			} else {
 				// for single job assign to client
 				ClientJobModel clientJob = new ClientJobModel();
 				clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currProcess.NextProcessId;
 				clientJob.AssignedClientId = leastUsedClient.Id;
 				clientJob.JobName = currProcess.SubProcesses.get(currProcess.NextProcessId).Executable;
+				clientJob.JobParam = executionResult;
 
 				// put job to the job table
 				InMemoryObjects.clientsJobs.put(clientJob.Id, clientJob);
@@ -95,7 +96,7 @@ public class MasterWorkSchedulingJob {
 
 	}
 
-	private static String initProcess(ProcessModel process, String upperCorrelationId) {
+	private static String initProcess(ProcessModel process, String upperCorrelationId, Object firstParam) {
 		// create process unique id
 		String correlationId = UUID.randomUUID().toString();
 		process.CorrelationId = correlationId;
@@ -110,21 +111,20 @@ public class MasterWorkSchedulingJob {
 		LogHelper.logTrace("Process started");
 		LogHelper.logTrace(process);
 		// make ready process first item to run
-		advanceProcess(correlationId);
+		advanceProcess(correlationId, firstParam);
 		// return process correlationId to track
 		return process.CorrelationId;
 	}
 
 	// start process first item and return correlationId for process
-	public static String startProcess(String processName) throws Exception {
+	public static String startProcess(String processName, Object firstParam) throws Exception {
 		ProcessModel process = JarHelper.getProcessByName(processName);
-		return initProcess(process, "");
+		return initProcess(process, "", firstParam);
 	}
 
-	// if a result come from assigned node schedule send result to waiting node
-	// and report result time for suggesting better optimized blocks
-	public static void handleJobResult(String correlationId) {
-		advanceProcess(correlationId);
+	// if a result come from assigned node schedule new job
+	public static void handleJobResult(String correlationId, Object executionResult) {
+		advanceProcess(correlationId, executionResult);
 	}
 
 	// if no heart beat from scheduled node reschedule to new node
