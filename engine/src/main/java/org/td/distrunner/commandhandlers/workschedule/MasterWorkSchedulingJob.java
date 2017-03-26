@@ -3,6 +3,7 @@ package org.td.distrunner.commandhandlers.workschedule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.LogHelper;
@@ -39,9 +40,24 @@ public class MasterWorkSchedulingJob {
 
 		// look if process finished and remove from process table
 		if (currProcess.NextProcessId != null && currProcess.NextProcessId.equals(currProcess.EndNodeId)) {
+			// remove finished process
 			InMemoryObjects.processes.remove(correlationId);
 			LogHelper.logTrace("Process finished");
 			LogHelper.logTrace(currProcess);
+			// advance upper process
+			if (currProcess.Id.indexOf(CorrelationSeperator) > 0) {
+				StringTokenizer upperCorrelationsIds = new StringTokenizer(
+						currProcess.Id.replace(CorrelationSeperator, ' '));
+				// find all upper processes
+				List<String> upperProcesses = new ArrayList<String>();
+				while (upperCorrelationsIds.hasMoreTokens()) {
+					upperProcesses.add(upperCorrelationsIds.nextToken());
+				}
+				// finish all upper processes in order
+				for (int i = upperProcesses.size() - 2; i >= 0; --i) {
+					handleJobResult(upperProcesses.get(i));
+				}
+			}
 			return;
 		}
 
@@ -60,7 +76,7 @@ public class MasterWorkSchedulingJob {
 			} else {
 				// for single job assign to client
 				ClientJobModel clientJob = new ClientJobModel();
-				clientJob.Id = currProcess.Id + CorrelationSeperator + currProcess.CorrelationId + CorrelationSeperator + currProcess.NextProcessId;
+				clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currProcess.NextProcessId;
 				clientJob.AssignedClientId = leastUsedClient.Id;
 				clientJob.JobName = currProcess.SubProcesses.get(currProcess.NextProcessId).Executable;
 
@@ -84,7 +100,8 @@ public class MasterWorkSchedulingJob {
 		String correlationId = UUID.randomUUID().toString();
 		process.CorrelationId = correlationId;
 		// set id
-		process.Id = upperCorrelationId + CorrelationSeperator + process.Id + CorrelationSeperator + correlationId;
+		if (!upperCorrelationId.equals(""))
+			process.Id = upperCorrelationId + CorrelationSeperator + process.Id;
 		// put future process as after start
 		process.NextProcessId = process.RelationTable.get(process.StartNodeId);
 		// put process to global table

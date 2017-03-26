@@ -17,6 +17,13 @@ public class ApiHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String path = request.getPathInfo();
+		
+		//download package operation
+		if (path.indexOf("DownloadJar")!=-1)
+		{
+			response.getWriter().print(path);
+			return;
+		}
 
 		switch (path) {
 		case "/ClientList":
@@ -37,6 +44,7 @@ public class ApiHandler extends HttpServlet {
 			response.getWriter().print("<h1>Hello World</h1>");
 			break;
 		}
+			
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 

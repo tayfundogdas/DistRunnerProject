@@ -19,10 +19,10 @@
     <startEvent id="_1"  isInterrupting="true">
     </startEvent>
     <scriptTask id="_jbpm-unique-2" name="Download Article" >
-      <script>DownloadArticleAction</script>
+      <script>org.td.samples.DownloadArticleAction</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-3" name="Tokenize Words" >
-      <script>TokenizeWordsAction</script>
+      <script>org.td.samples.TokenizeWordsAction</script>
     </scriptTask>
     <endEvent id="_3" >
         <terminateEventDefinition />
@@ -30,7 +30,7 @@
     <subProcess id="_jbpm-unique-4" name="Run on parallel nodes" >
     <!-- nodes -->
     <scriptTask id="_jbpm-unique-6" name="Calculate Words Counts" >
-      <script>CalculateWordsCountsAction</script>
+      <script>org.td.samples.CalculateWordsCountsAction</script>
     </scriptTask>
     <startEvent id="_jbpm-unique-0" name="Start"  isInterrupting="false">
     </startEvent>
