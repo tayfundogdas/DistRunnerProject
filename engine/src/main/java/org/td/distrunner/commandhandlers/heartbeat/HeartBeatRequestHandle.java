@@ -3,10 +3,8 @@ package org.td.distrunner.commandhandlers.heartbeat;
 import org.joda.time.DateTime;
 import org.td.distrunner.commandhandlers.IRequestHandler;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;
-import org.td.distrunner.model.MessageTypes;
 
 public class HeartBeatRequestHandle implements IRequestHandler<String, String> {
 
@@ -30,11 +28,6 @@ public class HeartBeatRequestHandle implements IRequestHandler<String, String> {
 			InMemoryObjects.clients.put(clientUniqueId, client);
 		}
 
-		// return client jobs from table
-		Message<String> mess = new Message<String>();
-		mess.MessageType = MessageTypes.HeartBeatResponseMessage;
-		mess.MessageContent = Message.toJsonString(ClientJobModel.getClientJobByClientId(clientUniqueId));
-
-		return mess;
+		return null;
 	}
 }

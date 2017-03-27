@@ -6,9 +6,6 @@ import java.io.StringWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.td.distrunner.model.AppSettings;
-
-import com.google.gson.Gson;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -53,15 +50,14 @@ public class LogHelper {
 		e.printStackTrace(new PrintWriter(errors));
 		log(errors.toString(), ERROR);
 	}
-	
+
 	public static void logError(Throwable e) {
 		StringWriter errors = new StringWriter();
 		e.printStackTrace(new PrintWriter(errors));
 		log(errors.toString(), ERROR);
 	}
-	
+
 	public static void logTrace(Object message) {
-		Gson gson = new Gson();
-		log(gson.toJson(message), TRACE);
+		log(JsonHelper.getJsonString(message), TRACE);
 	}
 }

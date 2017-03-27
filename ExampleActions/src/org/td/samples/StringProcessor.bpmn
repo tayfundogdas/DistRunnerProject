@@ -32,15 +32,8 @@
     <scriptTask id="_jbpm-unique-6" name="Calculate Words Counts" >
       <script>org.td.samples.CalculateWordsCountsAction</script>
     </scriptTask>
-    <startEvent id="_jbpm-unique-0" name="Start"  isInterrupting="false">
-    </startEvent>
-    <endEvent id="_jbpm-unique-1" name="End" >
-        <terminateEventDefinition />
-    </endEvent>
 
     <!-- connections -->
-    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-6" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-6" />
-    <sequenceFlow id="_jbpm-unique-6-_jbpm-unique-1" sourceRef="_jbpm-unique-6" targetRef="_jbpm-unique-1" />
     </subProcess>
 
     <!-- connections -->
@@ -66,25 +59,11 @@
         <dc:Bounds x="273" y="340" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-4" >
-        <dc:Bounds x="137" y="209" width="321" height="92" />
+        <dc:Bounds x="187" y="209" width="219" height="92" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-6" >
-        <dc:Bounds x="222" y="233" width="148" height="48" />
+        <dc:Bounds x="219" y="232" width="157" height="48" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-0" >
-        <dc:Bounds x="148" y="237" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-1" >
-        <dc:Bounds x="390" y="232" width="48" height="48" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-6" >
-        <di:waypoint x="35" y="52" />
-        <di:waypoint x="159" y="48" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-6-_jbpm-unique-1" >
-        <di:waypoint x="159" y="48" />
-        <di:waypoint x="277" y="47" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-2" >
         <di:waypoint x="294" y="20" />
         <di:waypoint x="293" y="90" />
@@ -94,12 +73,12 @@
         <di:waypoint x="295" y="161" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-4-_3" >
-        <di:waypoint x="297" y="255" />
+        <di:waypoint x="296" y="255" />
         <di:waypoint x="297" y="364" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-3-_jbpm-unique-4" >
         <di:waypoint x="295" y="161" />
-        <di:waypoint x="297" y="255" />
+        <di:waypoint x="296" y="255" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

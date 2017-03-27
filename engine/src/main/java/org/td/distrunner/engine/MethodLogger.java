@@ -28,12 +28,18 @@ public class MethodLogger {
 		logText.append(MethodSignature.class.cast(point.getSignature()).getMethod().getName());
 		logText.append('(');
 		for (Object parameter : point.getArgs()) {
-			logText.append(parameter.toString());
+			logText.append(parameter.toString().substring(0, 20));
+			logText.append('.');
+			logText.append('.');
+			logText.append('.');
 		}
 		logText.append(')');
 		logText.append(':');
 		logText.append(' ');
-		logText.append(result);
+		logText.append(result.toString().substring(0, 20));
+		logText.append('.');
+		logText.append('.');
+		logText.append('.');
 		logText.append(" in ");
 		logText.append(end);
 		logText.append("ns");

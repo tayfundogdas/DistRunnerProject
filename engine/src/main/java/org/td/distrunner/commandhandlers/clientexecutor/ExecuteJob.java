@@ -8,7 +8,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.List;
+
+import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ClientJobModel;
@@ -76,28 +77,25 @@ public class ExecuteJob {
 		return result;
 	}
 
-	public static void executeJobsAndReportResulttoMaster(List<ClientJobModel> myJobs) {
-		// run all job list and report result
-		for (ClientJobModel job : myJobs) {
-			Message<String> mess = new Message<String>();
-			mess.MessageType = MessageTypes.ExecutionResultMessage;
-			ExecutionResultModel result = new ExecutionResultModel();
-			result.JobId = job.Id;
-			Object execResult = null;
-			try {
-				execResult = runJob(job.JobName, job.JobParam);
-			} catch (Exception e) {
-				execResult = e;
-				LogHelper.logError(e);
-			}
-			result.ExecutionResult = execResult;
-			mess.MessageContent = Message.toJsonString(result);
-			try {
-				WebSocketClientChannel.sendMessagetoMaster(mess);
-			} catch (Exception e) {
-				LogHelper.logError(e);
-			}
+	public static void executeJobAndReportResulttoMaster(ClientJobModel myJob) {
+		// run job and report result
+		Message<String> mess = new Message<String>();
+		mess.MessageType = MessageTypes.ExecutionResultMessage;
+		ExecutionResultModel result = new ExecutionResultModel();
+		result.JobId = myJob.Id;
+		Object execResult = null;
+		try {
+			execResult = runJob(myJob.JobName, myJob.JobParam);
+		} catch (Exception e) {
+			execResult = e;
+			LogHelper.logError(e);
 		}
-
+		result.ExecutionResult = execResult;
+		mess.MessageContent = JsonHelper.getJsonString(result);
+		try {
+			WebSocketClientChannel.sendMessagetoMaster(mess);
+		} catch (Exception e) {
+			LogHelper.logError(e);
+		}
 	}
 }

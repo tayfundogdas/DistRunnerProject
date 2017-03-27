@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.jbpm.bpmn2.xml.XmlBPMNProcessDumper;
+import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.model.ProcessModel;
 import org.td.distrunner.processmodelparser.JarHelper;
-
-import com.google.gson.Gson;
 
 public class UploadProcessOperation {
 
@@ -77,19 +78,20 @@ public class UploadProcessOperation {
 					// Write the file
 					File file;
 					if (fileName.lastIndexOf("\\") >= 0) {
-						file = new File(AppSettings.ProcessJarPath + fileName.substring(fileName.lastIndexOf("\\")));
+						fileName = fileName.substring(fileName.lastIndexOf("\\"));
 					} else {
-						file = new File(
-								AppSettings.ProcessJarPath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+						fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
 					}
+					file = new File(AppSettings.ProcessJarPath + fileName);
 					fi.write(file);
 
 					// parse process file
 					String processXML = null;
 					try {
-						ProcessModel process = JarHelper.getProcessByName(fileName.replace(".jar", ""));
-						Gson gson = new Gson();
-						processXML = gson.toJson(process);
+						String processName = fileName.replace(".jar", "");
+						RuleFlowProcess process = JarHelper.getProcessByName(processName);
+						processXML = XmlBPMNProcessDumper.INSTANCE.dump(process);
+						InMemoryObjects.processCache.put(processName, process);
 					} catch (Exception e) {
 						file.delete();
 					}
@@ -97,7 +99,7 @@ public class UploadProcessOperation {
 					// print parse result
 					if (processXML != null) {
 						res.append("Uploaded Process: <br>");
-						res.append(processXML);
+						res.append(StringEscapeUtils.escapeHtml(processXML));
 					} else {
 						file.delete();
 						res.append("Invalid file! <br>");

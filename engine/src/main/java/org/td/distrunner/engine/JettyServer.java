@@ -2,13 +2,14 @@ package org.td.distrunner.engine;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.td.distrunner.apirelated.ApiHandler;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.wsrelated.WebSocketServletChannel;
+import org.td.distrunner.wsrelated.ServerHandler;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
 
@@ -19,24 +20,23 @@ public class JettyServer {
 		ServerConnector connector = new ServerConnector(server);
 		connector.setPort(AppSettings.JettyPort);
 		server.addConnector(connector);
-		
-		//jetty handlers collection
+
+		// jetty handlers collection
 		HandlerCollection handlers = new HandlerCollection();
 		server.setHandler(handlers);
 
-		// Setup the basic application "context" for this application at "/"
-		// This is also known as the handler tree (in jetty speak)
+		// add a api path
 		ServletContextHandler servletRequestHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		servletRequestHandler.setContextPath("/");
+		servletRequestHandler.setContextPath("/" + AppSettings.APIChannelName);
+		ServletHolder api = new ServletHolder(AppSettings.APIChannelName, ApiHandler.class);
+		servletRequestHandler.addServlet(api, "/*");
 		handlers.addHandler(servletRequestHandler);
 
-		// Add a websocket to a specific path spec
-		ServletHolder holderEvents = new ServletHolder(AppSettings.WSChannelName, WebSocketServletChannel.class);
-		servletRequestHandler.addServlet(holderEvents, "/" + AppSettings.WSChannelName + "/*");
-
-		// add a api path
-		ServletHolder api = new ServletHolder(AppSettings.APIChannelName, ApiHandler.class);
-		servletRequestHandler.addServlet(api, "/" + AppSettings.APIChannelName + "/*");
+		// Add a websocket path
+		ContextHandler wsContext = new ContextHandler();
+		wsContext.setContextPath("/" + AppSettings.WSChannelName);
+		wsContext.setHandler(new ServerHandler());
+		handlers.addHandler(wsContext);
 
 		// request logging
 		RequestLogImpl reqLogImpl = new RequestLogImpl();
@@ -46,7 +46,7 @@ public class JettyServer {
 		RequestLogHandler regLogHandler = new RequestLogHandler();
 		regLogHandler.setRequestLog(reqLogImpl);
 		handlers.addHandler(regLogHandler);
-		
+
 		try {
 			server.start();
 			// server.join(); no wait until server is ready

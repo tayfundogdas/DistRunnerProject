@@ -3,7 +3,6 @@ package org.td.distrunner.engine;
 import java.util.UUID;
 
 public class App {
-	
 
 	public static void main(String[] args) {
 		// unique app id for tracking
@@ -12,6 +11,9 @@ public class App {
 
 		// for logging
 		LogHelper.setupLog();
+
+		// for loading process cache
+		CacheHelper.LoadProcessCache();
 
 		try {
 			// register scheduled jobs

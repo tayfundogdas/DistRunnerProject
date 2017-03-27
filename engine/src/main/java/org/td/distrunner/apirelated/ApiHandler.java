@@ -5,6 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.td.distrunner.commandhandlers.workschedule.MasterWorkSchedulingJob;
 import org.td.distrunner.engine.LogHelper;
 
@@ -33,8 +34,7 @@ public class ApiHandler extends HttpServlet {
 		case "/StartProcess":
 			try {
 				Object firstParam = "https://en.wikipedia.org/wiki/Java";
-				String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor",
-						firstParam);
+				String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor", firstParam);
 				response.getWriter().print(correlationId);
 			} catch (Exception e) {
 				LogHelper.logError(e);

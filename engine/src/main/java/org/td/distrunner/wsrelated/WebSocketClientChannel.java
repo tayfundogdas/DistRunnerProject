@@ -15,7 +15,7 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 	public void onWebSocketText(String message) {
 		super.onWebSocketText(message);
 		// process request message and send response
-		MessageDispatcher.HandleMessage(message, AppSettings.MasterAddress);
+		MessageDispatcher.HandleMessage(message);
 	}
 
 	public static String getMasterWSAddress() {
@@ -38,7 +38,7 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		URI uri = URI.create(url);
 
 		WebSocketClient client = new WebSocketClient();
-
+		
 		client.start();
 		// The socket that receives events
 		WebSocketClientChannel socket = new WebSocketClientChannel();
@@ -47,13 +47,14 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		// Wait for Connect
 		Session session = fut.get();
 		// Send a message
-		session.getRemote().sendString(message.toString());
+		session.getRemote().sendStringByFuture(message.toString());
 		// Close session
 		session.close();
 		client.stop();
 	}
 
-	public static void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url) throws Exception {
+	public static void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url)
+			throws Exception {
 		URI uri = URI.create(url);
 
 		WebSocketClient client = new WebSocketClient();
@@ -66,7 +67,7 @@ public class WebSocketClientChannel extends WebSocketAdapter {
 		// Wait for Connect
 		Session session = fut.get();
 		// Send a message
-		session.getRemote().sendString(message.toString());
+		session.getRemote().sendStringByFuture(message.toString());
 		// Close session
 		session.close();
 		client.stop();
