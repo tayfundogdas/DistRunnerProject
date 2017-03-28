@@ -5,11 +5,9 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 public class ServerHandler extends WebSocketHandler
 {
-    private ClientList clientList = new ClientList();
-
-    @Override
+   @Override
     public void configure(WebSocketServletFactory factory)
     {
-        factory.setCreator(new ServerCreator(clientList));
+        factory.setCreator(new ServerCreator());
     }
 }

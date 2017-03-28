@@ -5,6 +5,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
+import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
@@ -13,30 +14,11 @@ import org.td.distrunner.model.MessageTypes;
 @WebSocket
 public class ServerSocket {
 
-	public ClientList clientlist;
 	public Session session;
-
-	public ServerSocket(ClientList clientlist) {
-		this.clientlist = clientlist;
-	}
 
 	@OnWebSocketConnect
 	public void onConnect(Session session) {
 		this.session = session;
-	}
-
-	private String prepareRemoteAddress(String rawAddress) {
-		StringBuilder incomimgAddress = new StringBuilder(rawAddress);
-		incomimgAddress.deleteCharAt(0);
-		incomimgAddress.delete(incomimgAddress.indexOf(":"), incomimgAddress.length());
-		return incomimgAddress.toString();
-	}
-
-	private String generateClientId(Message<String> message, String fromAddress) {
-		StringBuilder newContent = new StringBuilder(message.MessageContent);
-		newContent.append('@');
-		newContent.append(fromAddress);
-		return newContent.toString();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -46,11 +28,8 @@ public class ServerSocket {
 		Message messageObj = (Message) JsonHelper.fromJson(message, Message.class);
 		if (messageObj.MessageType == MessageTypes.HeartBeatRequestMessage) {
 			// small hack to add incoming message fromAddress
-			messageObj.MessageContent = generateClientId(messageObj,
-					prepareRemoteAddress(this.session.getRemoteAddress().toString()));
-
-			ClientList.getInstance().join((String) messageObj.MessageContent, this);
-			
+			messageObj.MessageContent = CommunicationHelper.generateClientId(messageObj,
+					CommunicationHelper.prepareRemoteAddress(this.session.getRemoteAddress().toString()));
 		}
 
 		// process request message and send response

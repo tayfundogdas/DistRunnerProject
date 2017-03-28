@@ -1,8 +1,10 @@
 package org.td.distrunner.commandhandlers.heartbeat;
 
+import java.util.ArrayList;
 import org.joda.time.DateTime;
 import org.td.distrunner.commandhandlers.IRequestHandler;
 import org.td.distrunner.engine.InMemoryObjects;
+import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;
 
@@ -25,7 +27,10 @@ public class HeartBeatRequestHandle implements IRequestHandler<String, String> {
 			client.Address = clientAddress;
 			client.lastHeartBeat = DateTime.now().toString();
 			client.JobCount = 0;
+			// init client
 			InMemoryObjects.clients.put(clientUniqueId, client);
+			// init client jobs
+			InMemoryObjects.clientJobs.put(clientUniqueId, new ArrayList<ClientJobModel>());
 		}
 
 		return null;

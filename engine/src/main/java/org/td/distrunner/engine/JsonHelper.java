@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonHelper {
 
-	private static ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	public static String getJsonString(Object obj) {
 		String result = null;	
@@ -19,7 +19,6 @@ public class JsonHelper {
 	@SuppressWarnings("unchecked")
 	public static Object fromJson(String json, @SuppressWarnings("rawtypes") Class cls) {
 		Object result = null;
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			result = mapper.readValue(json, cls);
 		} catch (Exception e) {

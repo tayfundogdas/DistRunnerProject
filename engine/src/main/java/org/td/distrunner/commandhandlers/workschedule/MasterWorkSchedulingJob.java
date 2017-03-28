@@ -18,7 +18,6 @@ import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.model.RunningProcess;
-import org.td.distrunner.wsrelated.ClientList;
 
 //this method try to schedule jobs as parallel as possible by examining data dependencies
 public class MasterWorkSchedulingJob {
@@ -69,7 +68,8 @@ public class MasterWorkSchedulingJob {
 		message.MessageType = MessageTypes.ExecutionRequestMessage;
 		message.MessageContent = JsonHelper.getJsonString(clientJob);
 		try {
-			ClientList.getInstance().writeSpecificMember(leastUsedClient.Id, message.toString());
+			List<ClientJobModel> clientJobs = InMemoryObjects.clientJobs.get(leastUsedClient.Id);
+			clientJobs.add(clientJob);
 			// increment client job count
 			leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
 			LogHelper.logTrace("Job assigned to client");

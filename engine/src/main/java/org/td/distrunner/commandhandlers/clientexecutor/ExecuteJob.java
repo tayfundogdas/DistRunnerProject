@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-
+import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
@@ -17,7 +17,6 @@ import org.td.distrunner.model.ExecutionResultModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.processmodelparser.JarHelper;
-import org.td.distrunner.wsrelated.WebSocketClientChannel;
 
 public class ExecuteJob {
 
@@ -93,7 +92,7 @@ public class ExecuteJob {
 		result.ExecutionResult = execResult;
 		mess.MessageContent = JsonHelper.getJsonString(result);
 		try {
-			WebSocketClientChannel.sendMessagetoMaster(mess);
+			CommunicationHelper.sendMessagetoMaster(mess);
 		} catch (Exception e) {
 			LogHelper.logError(e);
 		}

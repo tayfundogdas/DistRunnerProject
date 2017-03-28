@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.RunningProcess;
 
@@ -12,6 +13,8 @@ public class InMemoryObjects {
 	public static ConcurrentHashMap<String, ClientModel> clients = new ConcurrentHashMap<String, ClientModel>();
 	// currently running process Cache that parsed from xml
 	public static ConcurrentHashMap<String, RuleFlowProcess> processCache = new ConcurrentHashMap<String, RuleFlowProcess>();
+	// client jobs list
+	public static ConcurrentHashMap<String, List<ClientJobModel>> clientJobs = new ConcurrentHashMap<String, List<ClientJobModel>>();
 	// running process list
 	public static ConcurrentHashMap<String, RunningProcess> runningProcessList = new ConcurrentHashMap<String, RunningProcess>();
 	// heart beat failure count for starting 0

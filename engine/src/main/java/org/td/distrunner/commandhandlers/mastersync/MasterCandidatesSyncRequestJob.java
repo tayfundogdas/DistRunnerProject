@@ -3,10 +3,10 @@ package org.td.distrunner.commandhandlers.mastersync;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
-import org.td.distrunner.wsrelated.WebSocketClientChannel;
 
 //sync client and job tables from current master in interval to master candidates stated in settings
 public class MasterCandidatesSyncRequestJob implements Job {
@@ -16,7 +16,7 @@ public class MasterCandidatesSyncRequestJob implements Job {
 		Message<Object> mess = new Message<Object>();
 		mess.MessageType = MessageTypes.MasterSyncRequestMessage;
 		try {
-			WebSocketClientChannel.sendMessagetoMaster(mess);
+			CommunicationHelper.sendMessagetoMaster(mess);
 		} catch (Exception e) {
 			LogHelper.logError(e);
 		}
