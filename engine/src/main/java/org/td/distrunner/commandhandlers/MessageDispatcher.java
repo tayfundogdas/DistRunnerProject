@@ -2,9 +2,9 @@ package org.td.distrunner.commandhandlers;
 
 import org.td.distrunner.commandhandlers.assignmaster.NewMasterHandle;
 import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestHandle;
+import org.td.distrunner.commandhandlers.heartbeat.HeartBeatResponseHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncResponseHandle;
-import org.td.distrunner.commandhandlers.workschedule.ExecutionRequestHandle;
 import org.td.distrunner.commandhandlers.workschedule.ExecutionResultHandle;
 import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.model.Message;
@@ -21,6 +21,9 @@ public class MessageDispatcher<I, O> {
 		case MessageTypes.HeartBeatRequestMessage:
 			messageHandler = new HeartBeatRequestHandle();
 			break;
+		case MessageTypes.HeartBeatResponseMessage:
+			messageHandler = new HeartBeatResponseHandle();
+			break;
 		case MessageTypes.MasterSyncRequestMessage:
 			messageHandler = new MasterCandidatesSyncRequestHandle();
 			break;
@@ -29,9 +32,6 @@ public class MessageDispatcher<I, O> {
 			break;
 		case MessageTypes.NewMasterMessage:
 			messageHandler = new NewMasterHandle();
-			break;
-		case MessageTypes.ExecutionRequestMessage:
-			messageHandler = new ExecutionRequestHandle();
 			break;
 		case MessageTypes.ExecutionResultMessage:
 			messageHandler = new ExecutionResultHandle();

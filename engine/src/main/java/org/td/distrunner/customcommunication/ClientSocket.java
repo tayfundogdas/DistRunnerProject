@@ -30,14 +30,19 @@ public class ClientSocket {
 		// Send post request
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(message.toString());
+		byte[] messageBytes = message.toString().getBytes("UTF8");
+		for (int i = 0; i < messageBytes.length; i++) {
+			wr.writeByte(messageBytes[i]);
+		}
 		wr.flush();
 		wr.close();
 
 		// process response message
-		String response = IOUtils.toString(con.getInputStream());
-		if (response != null && response.length() > 0)
-			MessageDispatcher.HandleMessage(response);
+		if (con.getResponseCode() == 200) {
+			String response = IOUtils.toString(con.getInputStream(), "UTF-8");			
+			if (response != null && response.length() > 0)
+				MessageDispatcher.HandleMessage(response);
+		}
 	}
 
 	public void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url) throws Exception {

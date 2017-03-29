@@ -14,6 +14,8 @@ public class AppSettings {
 	public static String HeartBeatRequestJobCronSchedule = "0/5 * * * * ?";
 	// master candidate sync request timing
 	public static String MasterCandidatesSyncRequestJobCronSchedule = "0/5 * * * * ?";
+	// client job worker interval
+	public static String NodeExecuteJobCronSchedule = "0/5 * * * * ?";
 	// 1 if node is master candidate else 0
 	public static Byte IsMasterCandidate = 1;
 	// constant for heart beat threshold

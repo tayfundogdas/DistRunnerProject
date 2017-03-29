@@ -11,12 +11,9 @@ import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.StartNode;
 import org.kie.api.definition.process.Node;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
-import org.td.distrunner.model.Message;
-import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.model.RunningProcess;
 
 //this method try to schedule jobs as parallel as possible by examining data dependencies
@@ -62,14 +59,11 @@ public class MasterWorkSchedulingJob {
 		clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currNode.getId();
 		clientJob.JobName = action.getConsequence();
 		clientJob.JobParam = executionResult;
+		clientJob.AssignedClientId = leastUsedClient.Id;
 
-		// send job to client
-		Message<String> message = new Message<String>();
-		message.MessageType = MessageTypes.ExecutionRequestMessage;
-		message.MessageContent = JsonHelper.getJsonString(clientJob);
+		// put message to waiting queue
 		try {
-			List<ClientJobModel> clientJobs = InMemoryObjects.clientJobs.get(leastUsedClient.Id);
-			clientJobs.add(clientJob);
+			InMemoryObjects.clientJobs.put(clientJob.Id, clientJob);
 			// increment client job count
 			leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
 			LogHelper.logTrace("Job assigned to client");
@@ -116,6 +110,11 @@ public class MasterWorkSchedulingJob {
 		// get process and check if its exist
 		RunningProcess currProcess = InMemoryObjects.runningProcessList.get(correlationId);
 		if (currProcess == null) {
+			//clear client job list for finished process
+			for (String jobId : InMemoryObjects.clientJobs.keySet()) {
+				if (jobId.startsWith(correlationId))
+					InMemoryObjects.clientJobs.remove(jobId);
+			}
 			LogHelper.logTrace("No process for:" + correlationId);
 			return;
 		}
@@ -130,6 +129,8 @@ public class MasterWorkSchedulingJob {
 		if (mainFlow.getNode(currProcess.CurrentNode).getOutgoingConnections().isEmpty()) {
 			// remove finished process
 			InMemoryObjects.runningProcessList.remove(currProcess.CorrelationId);
+			// clear client jobs about this process
+			InMemoryObjects.clientJobs.remove(correlationId);
 			LogHelper.logTrace("Process finished");
 			LogHelper.logTrace(currProcess);
 			return;

@@ -8,7 +8,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.td.distrunner.engine.CommunicationHelper;
+import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
@@ -18,7 +23,7 @@ import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.processmodelparser.JarHelper;
 
-public class ExecuteJob {
+public class ExecuteJob implements Job {
 
 	private static String getFullMasterAPIAddress(String path) {
 		StringBuilder str = new StringBuilder();
@@ -76,7 +81,7 @@ public class ExecuteJob {
 		return result;
 	}
 
-	public static void executeJobAndReportResulttoMaster(ClientJobModel myJob) {
+	private static void executeJobAndReportResulttoMaster(ClientJobModel myJob) {
 		// run job and report result
 		Message<String> mess = new Message<String>();
 		mess.MessageType = MessageTypes.ExecutionResultMessage;
@@ -93,8 +98,19 @@ public class ExecuteJob {
 		mess.MessageContent = JsonHelper.getJsonString(result);
 		try {
 			CommunicationHelper.sendMessagetoMaster(mess);
+			//remove job from my job list
+			InMemoryObjects.currentNodeJobList.remove(myJob.Id);
 		} catch (Exception e) {
 			LogHelper.logError(e);
+		}
+	}
+
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		if (InMemoryObjects.currentNodeJobList.size() > 0) {
+			String myJobId = InMemoryObjects.currentNodeJobList.keys().nextElement();
+			ClientJobModel myJob = InMemoryObjects.currentNodeJobList.get(myJobId);
+			ExecuteJob.executeJobAndReportResulttoMaster(myJob);
 		}
 	}
 }

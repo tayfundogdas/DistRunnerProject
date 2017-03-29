@@ -9,15 +9,17 @@ import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.RunningProcess;
 
 public class InMemoryObjects {
-	// active live client list key is client id
+	// active live client list key is client id on master
 	public static ConcurrentHashMap<String, ClientModel> clients = new ConcurrentHashMap<String, ClientModel>();
-	// currently running process Cache that parsed from xml
+	// currently running process cache that parsed from xml on master
 	public static ConcurrentHashMap<String, RuleFlowProcess> processCache = new ConcurrentHashMap<String, RuleFlowProcess>();
-	// client jobs list
-	public static ConcurrentHashMap<String, List<ClientJobModel>> clientJobs = new ConcurrentHashMap<String, List<ClientJobModel>>();
-	// running process list
+	// clients jobs list on master
+	public static ConcurrentHashMap<String, ClientJobModel> clientJobs = new ConcurrentHashMap<String, ClientJobModel>();
+	// running process list on master
 	public static ConcurrentHashMap<String, RunningProcess> runningProcessList = new ConcurrentHashMap<String, RunningProcess>();
-	// heart beat failure count for starting 0
+	// client assigned jobs on client
+	public static ConcurrentHashMap<String, ClientJobModel> currentNodeJobList = new ConcurrentHashMap<String, ClientJobModel>();
+	// heart beat failure count for starting 0 on client
 	public static Byte heartBeatFailCount = 0;
 	// unique client id
 	public static String AppId = null;
