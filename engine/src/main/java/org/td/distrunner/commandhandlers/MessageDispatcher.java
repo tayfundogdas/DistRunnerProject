@@ -6,15 +6,13 @@ import org.td.distrunner.commandhandlers.heartbeat.HeartBeatResponseHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncResponseHandle;
 import org.td.distrunner.commandhandlers.workschedule.ExecutionResultHandle;
-import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 
-public class MessageDispatcher<I, O> {
+public class MessageDispatcher {
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Message HandleMessage(String incomingMessageText) {
-		Message message = (Message) JsonHelper.fromJson(incomingMessageText, Message.class);
+		Message message = Message.getMessagefromString(incomingMessageText);
 		IRequestHandler messageHandler = null;
 
 		switch (message.MessageType) {
@@ -41,9 +39,9 @@ public class MessageDispatcher<I, O> {
 			break;
 		}
 
-		if (messageHandler != null)
+		if (messageHandler != null) {
 			return messageHandler.handle(message);
-		else
+		} else
 			return null;
 	}
 }

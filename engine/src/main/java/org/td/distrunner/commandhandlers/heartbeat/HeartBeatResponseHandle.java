@@ -9,10 +9,10 @@ import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.Message;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public class HeartBeatResponseHandle implements IRequestHandler<String, Object> {
+public class HeartBeatResponseHandle implements IRequestHandler {
 
 	@Override
-	public Message<Object> handle(Message<String> message) {
+	public Message handle(Message message) {
 		List<ClientJobModel> myJobs = null;
 		try {
 			myJobs = JsonHelper.mapper.readValue(message.MessageContent, new TypeReference<List<ClientJobModel>>() {

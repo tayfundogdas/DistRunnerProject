@@ -21,11 +21,9 @@ public class ServerSocket {
 		this.session = session;
 	}
 
-	@SuppressWarnings("unchecked")
 	@OnWebSocketMessage
 	public void onText(String message) {
-		@SuppressWarnings("rawtypes")
-		Message messageObj = (Message) JsonHelper.fromJson(message, Message.class);
+		Message messageObj = Message.getMessagefromString(message);
 		if (messageObj.MessageType == MessageTypes.HeartBeatRequestMessage) {
 			// small hack to add incoming message fromAddress
 			messageObj.MessageContent = CommunicationHelper.generateClientId(messageObj,
@@ -33,13 +31,12 @@ public class ServerSocket {
 		}
 
 		// process request message and send response
-		@SuppressWarnings("rawtypes")
 		Message response = MessageDispatcher.HandleMessage(JsonHelper.getJsonString(messageObj));
 
 		handleResponseMessage(response);
 	}
 
-	private void handleResponseMessage(@SuppressWarnings("rawtypes") Message response) {
+	private void handleResponseMessage(Message response) {
 		if (response != null) {
 			try {
 				this.session.getRemote().sendStringByFuture(response.toString());

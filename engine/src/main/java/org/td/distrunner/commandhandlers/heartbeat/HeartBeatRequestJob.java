@@ -17,7 +17,7 @@ public class HeartBeatRequestJob implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		// if master is up send heart beat message
 		if (InMemoryObjects.heartBeatFailCount < AppSettings.HeartBeatTreshold) {
-			Message<String> mess = new Message<String>();
+			Message mess = new Message();
 			mess.MessageType = MessageTypes.HeartBeatRequestMessage;
 			mess.MessageContent = InMemoryObjects.AppId;
 			try {

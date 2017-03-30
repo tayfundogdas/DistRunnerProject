@@ -2,14 +2,13 @@ package org.td.distrunner.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.engine.JsonHelper;
 
 public class ClientJobModel {
 	public String Id;
 	public String JobName;
-	public Object JobParam;
+	public String JobParam;
 	public String AssignedClientId;
 
 	public static List<ClientJobModel> getClientJobsByClientId(String clientId) {

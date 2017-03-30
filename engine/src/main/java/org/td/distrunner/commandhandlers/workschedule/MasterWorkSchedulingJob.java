@@ -34,7 +34,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	private static void advanceCompositeContextNode(Node currNode, RunningProcess currProcess,
-			ClientModel leastUsedClient, Object executionResult) {
+			ClientModel leastUsedClient, String executionResult) {
 		CompositeContextNode nodeInfo = (CompositeContextNode) currNode;
 
 		Node[] allNodes = nodeInfo.getNodes();
@@ -52,7 +52,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	private static void scheduleActionToClient(Node currNode, RunningProcess currProcess, ClientModel leastUsedClient,
-			Object executionResult) {
+			String executionResult) {
 		ActionNode nodeInfo = (ActionNode) currNode;
 		DroolsConsequenceAction action = (DroolsConsequenceAction) nodeInfo.getAction();
 		ClientJobModel clientJob = new ClientJobModel();
@@ -73,7 +73,7 @@ public class MasterWorkSchedulingJob {
 		}
 	}
 
-	private static void processNode(Node currNode, RunningProcess currProcess, Object executionResult) {
+	private static void processNode(Node currNode, RunningProcess currProcess, String executionResult) {
 
 		ClientModel leastUsedClient = getLeastUsedNode();
 		if (leastUsedClient == null) {
@@ -106,7 +106,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	// after handleJobResult
-	private static void advanceProcess(String correlationId, Object executionResult) {
+	private static void advanceProcess(String correlationId, String executionResult) {
 		// get process and check if its exist
 		RunningProcess currProcess = InMemoryObjects.runningProcessList.get(correlationId);
 		if (currProcess == null) {
@@ -142,7 +142,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	// start process first item and return correlationId for process public
-	public static String startProcess(String processName, Object firstParam) throws Exception {
+	public static String startProcess(String processName, String firstParam) throws Exception {
 		// create process unique id
 		String correlationId = UUID.randomUUID().toString();
 		RunningProcess process = new RunningProcess();
@@ -160,7 +160,7 @@ public class MasterWorkSchedulingJob {
 	}
 
 	// if a result come from assigned node schedule new job public static
-	public static void handleJobResult(String correlationId, Object executionResult) {
+	public static void handleJobResult(String correlationId, String executionResult) {
 		advanceProcess(correlationId, executionResult);
 	}
 

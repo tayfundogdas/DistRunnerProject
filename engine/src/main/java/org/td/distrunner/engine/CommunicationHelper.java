@@ -11,19 +11,19 @@ public class CommunicationHelper {
 		return incomimgAddress.toString();
 	}
 
-	public static String generateClientId(Message<String> message, String fromAddress) {
+	public static String generateClientId(Message message, String fromAddress) {
 		StringBuilder newContent = new StringBuilder(message.MessageContent);
 		newContent.append('@');
 		newContent.append(fromAddress);
 		return newContent.toString();
 	}
 
-	public static void sendMessagetoMaster(@SuppressWarnings("rawtypes") Message message) throws Exception {
+	public static void sendMessagetoMaster(Message message) throws Exception {
 		ClientSocket client = new ClientSocket();
 		client.sendMessagetoMaster(message);
 	}
 
-	public static void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url)
+	public static void sendMessagetoAddress(Message message, String url)
 			throws Exception {
 		ClientSocket client = new ClientSocket();
 		client.sendMessagetoAddress(message, url);

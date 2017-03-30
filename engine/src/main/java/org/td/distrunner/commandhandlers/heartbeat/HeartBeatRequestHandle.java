@@ -9,10 +9,10 @@ import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 
-public class HeartBeatRequestHandle implements IRequestHandler<String, String> {
+public class HeartBeatRequestHandle implements IRequestHandler {
 
 	@Override
-	public Message<String> handle(Message<String> message) {
+	public Message handle(Message message) {
 		String clientUniqueId = message.MessageContent;
 		// make heartBeat updates to tables
 		if (InMemoryObjects.clients.containsKey(clientUniqueId)) // existing
@@ -33,7 +33,7 @@ public class HeartBeatRequestHandle implements IRequestHandler<String, String> {
 		}
 
 		// return client jobs from table
-		Message<String> mess = new Message<String>();
+		Message mess = new Message();
 		mess.MessageType = MessageTypes.HeartBeatResponseMessage;
 		mess.MessageContent = JsonHelper.getJsonString(ClientJobModel.getClientJobsByClientId(clientUniqueId));
 

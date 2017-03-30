@@ -13,7 +13,7 @@ public class MasterCandidatesSyncRequestJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		Message<Object> mess = new Message<Object>();
+		Message mess = new Message();
 		mess.MessageType = MessageTypes.MasterSyncRequestMessage;
 		try {
 			CommunicationHelper.sendMessagetoMaster(mess);

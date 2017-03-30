@@ -70,7 +70,7 @@ public class ClientSocket {
 		}
 	}
 
-	public void sendMessagetoMaster(@SuppressWarnings("rawtypes") Message message) throws Exception {
+	public void sendMessagetoMaster(Message message) throws Exception {
 		String url = getMasterWSAddress();
 
 		ClientSocket socket = new ClientSocket();
@@ -85,7 +85,7 @@ public class ClientSocket {
 		client.stop();
 	}
 
-	public void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url)
+	public void sendMessagetoAddress(Message message, String url)
 			throws Exception {
 
 		ClientSocket socket = new ClientSocket();

@@ -21,7 +21,7 @@ public class ClientSocket {
 		return str.toString();
 	}
 
-	public void sendMessagetoMaster(@SuppressWarnings("rawtypes") Message message) throws Exception {
+	public void sendMessagetoMaster(Message message) throws Exception {
 		URL website = new URL(getMasterWSAddress());
 		HttpURLConnection con = (HttpURLConnection) website.openConnection();
 		// add request header
@@ -45,7 +45,7 @@ public class ClientSocket {
 		}
 	}
 
-	public void sendMessagetoAddress(@SuppressWarnings("rawtypes") Message message, String url) throws Exception {
+	public void sendMessagetoAddress(Message message, String url) throws Exception {
 
 	}
 }

@@ -6,10 +6,10 @@ import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 
-public class NewMasterHandle implements IRequestHandler<String,Object> {
+public class NewMasterHandle implements IRequestHandler {
 
 	@Override
-	public Message<Object> handle(Message<String> message) {
+	public Message handle(Message message) {
 		// cancel waiting new master operation
 		AssignNewMasterJob.cancelMyNewMasterMessage();
 

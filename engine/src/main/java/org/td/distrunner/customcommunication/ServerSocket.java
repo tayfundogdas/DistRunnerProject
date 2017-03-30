@@ -26,20 +26,17 @@ public class ServerSocket extends HttpServlet {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding("UTF-8");
 		String message = IOUtils.toString(req.getInputStream(), "UTF-8");
 		
-		@SuppressWarnings("rawtypes")
-		Message messageObj = (Message) JsonHelper.fromJson(message, Message.class);
+		Message messageObj = Message.getMessagefromString(message);
 		if (messageObj.MessageType == MessageTypes.HeartBeatRequestMessage) {
 			// small hack to add incoming message fromAddress
 			messageObj.MessageContent = CommunicationHelper.generateClientId(messageObj, req.getRemoteAddr());
 		}
 
 		// process request message and send response
-		@SuppressWarnings("rawtypes")
 		Message response = MessageDispatcher.HandleMessage(JsonHelper.getJsonString(messageObj));
 
 		if (response != null) {
