@@ -1,4 +1,4 @@
-package org.td.distrunner.wsrelated;
+package org.td.distrunner.communication.websocket;
 
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;

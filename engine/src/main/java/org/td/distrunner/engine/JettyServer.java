@@ -8,9 +8,9 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.td.distrunner.apirelated.ApiHandler;
-import org.td.distrunner.customcommunication.ServerSocket;
+import org.td.distrunner.communication.custom.ServerSocket;
+import org.td.distrunner.communication.websocket.ServerHandler;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.wsrelated.ServerHandler;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
 

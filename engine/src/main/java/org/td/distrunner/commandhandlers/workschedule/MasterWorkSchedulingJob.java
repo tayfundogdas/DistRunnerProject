@@ -80,7 +80,6 @@ public class MasterWorkSchedulingJob {
 			// if no available node found
 			LogHelper.logTrace("No node to schedule for");
 			LogHelper.logTrace(currProcess);
-			LogHelper.logTrace(leastUsedClient == null);
 		} else {
 			// if available client to run found
 
@@ -110,7 +109,7 @@ public class MasterWorkSchedulingJob {
 		// get process and check if its exist
 		RunningProcess currProcess = InMemoryObjects.runningProcessList.get(correlationId);
 		if (currProcess == null) {
-			//clear client job list for finished process
+			// clear client job list for finished process
 			for (String jobId : InMemoryObjects.clientJobs.keySet()) {
 				if (jobId.startsWith(correlationId))
 					InMemoryObjects.clientJobs.remove(jobId);
@@ -120,7 +119,8 @@ public class MasterWorkSchedulingJob {
 		}
 
 		// look if process finished and remove from process table
-		RuleFlowProcess mainFlow = InMemoryObjects.processCache.get(currProcess.Id);
+		String cacheName = currProcess.Id.substring(0, currProcess.Id.lastIndexOf('.'));
+		RuleFlowProcess mainFlow = InMemoryObjects.processCache.get(cacheName);
 
 		// set after start node if process just started
 		if (currProcess.CurrentNode == -1)

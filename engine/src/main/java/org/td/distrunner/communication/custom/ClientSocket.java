@@ -1,14 +1,15 @@
-package org.td.distrunner.customcommunication;
+package org.td.distrunner.communication.custom;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
+import org.td.distrunner.communication.IClientSocket;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 
-public class ClientSocket {
+public class ClientSocket implements IClientSocket {
 
 	private String getMasterWSAddress() {
 		StringBuilder str = new StringBuilder();

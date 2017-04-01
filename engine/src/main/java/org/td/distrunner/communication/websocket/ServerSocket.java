@@ -1,4 +1,4 @@
-package org.td.distrunner.wsrelated;
+package org.td.distrunner.communication.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;

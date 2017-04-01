@@ -24,22 +24,17 @@ public class JarHelper {
 		// Getting the files from jar
 		Enumeration<? extends JarEntry> enumeration = jar.entries();
 		// find bpmn file
-		ZipEntry zipEntry = Collections.list(enumeration).stream()
-				.filter(x -> x.getName().startsWith("org/td/samples/") && x.getName().endsWith(".bpmn")).findFirst()
-				.get();
+		ZipEntry zipEntry = Collections.list(enumeration).stream().filter(
+				x -> x.getName().startsWith(processName.replace('.', '/') + "/") && x.getName().endsWith(".bpmn"))
+				.findFirst().orElse(null);
 
 		if (zipEntry != null) {
-			String entryName = zipEntry.getName();
-			if (entryName.startsWith("org/td/samples/") && entryName.endsWith(".bpmn")) {
-
-				InputStream in = jar.getInputStream(zipEntry);			
-				String processXml = IOUtils.toString(in); 
-				XmlBPMNProcessDumper xmlOp = XmlBPMNProcessDumper.INSTANCE;
-				RuleFlowProcess process = (RuleFlowProcess) xmlOp.readProcess(processXml);
-				in.close();
-
-				result = process;
-			}
+			InputStream in = jar.getInputStream(zipEntry);
+			String processXml = IOUtils.toString(in);
+			XmlBPMNProcessDumper xmlOp = XmlBPMNProcessDumper.INSTANCE;
+			RuleFlowProcess process = (RuleFlowProcess) xmlOp.readProcess(processXml);
+			in.close();
+			result = process;
 		}
 
 		// close jar file

@@ -1,9 +1,17 @@
 package org.td.distrunner.engine;
 
+import org.td.distrunner.communication.IClientSocket;
 import org.td.distrunner.model.Message;
-import org.td.distrunner.customcommunication.ClientSocket;
 
 public class CommunicationHelper {
+	
+	public static IClientSocket client;
+	
+	public static void setClientMode(IClientSocket clientImp)
+	{
+		CommunicationHelper.client = clientImp;
+	}
+	
 	public static String prepareRemoteAddress(String rawAddress) {
 		StringBuilder incomimgAddress = new StringBuilder(rawAddress);
 		incomimgAddress.deleteCharAt(0);
@@ -19,13 +27,11 @@ public class CommunicationHelper {
 	}
 
 	public static void sendMessagetoMaster(Message message) throws Exception {
-		ClientSocket client = new ClientSocket();
 		client.sendMessagetoMaster(message);
 	}
 
 	public static void sendMessagetoAddress(Message message, String url)
 			throws Exception {
-		ClientSocket client = new ClientSocket();
 		client.sendMessagetoAddress(message, url);
 	}
 }

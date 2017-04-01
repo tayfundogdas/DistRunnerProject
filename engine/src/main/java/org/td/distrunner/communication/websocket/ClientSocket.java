@@ -1,4 +1,4 @@
-package org.td.distrunner.wsrelated;
+package org.td.distrunner.communication.websocket;
 
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -11,12 +11,13 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
+import org.td.distrunner.communication.IClientSocket;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 
 @WebSocket
-public class ClientSocket {
+public class ClientSocket implements IClientSocket {
 
 	private Session session;
 	CountDownLatch latch = new CountDownLatch(1);

@@ -19,7 +19,8 @@ public class CacheHelper {
 			RuleFlowProcess process;
 			try {
 				process = JarHelper.getProcessByName(processName);
-				InMemoryObjects.processCache.put(processName, process);
+				if (process != null)
+					InMemoryObjects.processCache.put(processName, process);
 			} catch (Exception e) {
 				LogHelper.logError(e);
 			}

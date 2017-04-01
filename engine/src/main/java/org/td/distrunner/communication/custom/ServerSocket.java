@@ -1,7 +1,6 @@
-package org.td.distrunner.customcommunication;
+package org.td.distrunner.communication.custom;
 
 import java.io.IOException;
-import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.td.distrunner.commandhandlers.MessageDispatcher;
 import org.td.distrunner.engine.CommunicationHelper;
-import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JettyServer;
 import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 
@@ -42,18 +38,6 @@ public class ServerSocket extends HttpServlet {
 		if (response != null) {
 			resp.getWriter().print(response.toString());
 		}
-	}
-
-	public static void main(String[] args) {
-		// unique app id for tracking
-		UUID uuid = UUID.randomUUID();
-		InMemoryObjects.AppId = uuid.toString();
-
-		// for logging
-		LogHelper.setupLog();
-
-		// start socket and api server valid both for master and slave
-		JettyServer.startServer();
 	}
 
 }

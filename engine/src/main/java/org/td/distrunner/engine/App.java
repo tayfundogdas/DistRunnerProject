@@ -2,6 +2,8 @@ package org.td.distrunner.engine;
 
 import java.util.UUID;
 
+import org.td.distrunner.communication.custom.ClientSocket;
+
 public class App {
 
 	public static void main(String[] args) {
@@ -11,6 +13,9 @@ public class App {
 
 		// for logging
 		LogHelper.setupLog();
+		
+		//for communication channel
+		CommunicationHelper.setClientMode(new ClientSocket());
 
 		// for loading process cache
 		CacheHelper.LoadProcessCache();
