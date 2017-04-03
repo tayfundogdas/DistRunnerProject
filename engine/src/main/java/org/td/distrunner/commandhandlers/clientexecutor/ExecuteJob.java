@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.Channels;
@@ -22,9 +21,10 @@ import org.td.distrunner.model.ExecutionResultModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 import org.td.distrunner.processmodelparser.JarHelper;
-import com.fasterxml.jackson.databind.JavaType;
 
 public class ExecuteJob implements Job {
+
+	public static final String JobFailMesage = "ERROR";
 
 	private static String getFullMasterAPIAddress(String path) {
 		StringBuilder str = new StringBuilder();
@@ -58,8 +58,8 @@ public class ExecuteJob implements Job {
 		}
 	}
 
-	private static Object runJob(String jobName, String jobParam) throws Exception {
-		Object result = null;
+	private static String runJob(String jobName, String jobParam) throws Exception {
+		String result = null;
 		// download jar from master if my disk does not contain it
 		downloadAndCacheJarFile(jobName);
 		// run class inside jar
@@ -67,23 +67,11 @@ public class ExecuteJob implements Job {
 		URLClassLoader clsLoader = URLClassLoader.newInstance(new URL[] { url });
 		@SuppressWarnings("rawtypes")
 		Class cls = clsLoader.loadClass(jobName);
+		@SuppressWarnings("unchecked")
+		Method method = cls.getDeclaredMethod("Execute", new Class[] { String.class });
 		Object obj = cls.newInstance();
-		//find suitable method to run
-		Method[] methods = cls.getDeclaredMethods();
-		for (Method method : methods) {
-			if (method.getName().equals("Execute")) {
-				Type[] params = method.getParameterTypes();
-				for (Type type : params) {
-					if (!type.getTypeName().equals(Object.class.getTypeName()))
-					{
-						JavaType jtype = JsonHelper.mapper.getTypeFactory().constructType(type);
-						Object par = JsonHelper.mapper.readValue(jobParam, jtype);
-						result = method.invoke(obj, par);
-					}
-				}
-			}
-		}
-		// method = null;
+		result = (String) method.invoke(obj, jobParam);
+		method = null;
 		obj = null;
 		cls = null;
 		// closes jar loader
@@ -100,19 +88,21 @@ public class ExecuteJob implements Job {
 		mess.MessageType = MessageTypes.ExecutionResultMessage;
 		ExecutionResultModel result = new ExecutionResultModel();
 		result.JobId = myJob.Id;
-		Object execResult = null;
+		String execResult = null;
 		try {
 			execResult = runJob(myJob.JobName, myJob.JobParam);
 		} catch (Exception e) {
-			execResult = e;
+			execResult = JobFailMesage;
 			LogHelper.logError(e);
+			// LogHelper.logTrace("Error on run with job : " +
+			// myJob.toString());
 		}
-		result.ExecutionResult =  JsonHelper.getJsonString(execResult);
+		LogHelper.logTrace("Result for " + myJob.Id + " : "
+				+ execResult.substring(0, execResult.length() > 50 ? 50 : execResult.length()));
+		result.ExecutionResult = execResult;
 		mess.MessageContent = JsonHelper.getJsonString(result);
 		try {
 			CommunicationHelper.sendMessagetoMaster(mess);
-			// remove job from my job list
-			InMemoryObjects.currentNodeJobList.remove(myJob.Id);
 		} catch (Exception e) {
 			LogHelper.logError(e);
 		}
@@ -120,10 +110,15 @@ public class ExecuteJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		if (InMemoryObjects.currentNodeJobList.size() > 0) {
-			String myJobId = InMemoryObjects.currentNodeJobList.keys().nextElement();
-			ClientJobModel myJob = InMemoryObjects.currentNodeJobList.get(myJobId);
+		ClientJobModel myJob = InMemoryObjects.currentNodeJobList.values().stream()
+				.filter(x -> x.IsProcessed == null || x.IsProcessed == false).findFirst().orElse(null);
+		if (myJob != null) {
 			ExecuteJob.executeJobAndReportResulttoMaster(myJob);
+			//TODO: remove  executed job
+			//InMemoryObjects.currentNodeJobList.remove(myJob.Id);
+			myJob.IsProcessed = true;
+			InMemoryObjects.currentNodeJobList.put(myJob.Id, myJob);
+			System.out.println(myJob.JobName);
 		}
 	}
 }

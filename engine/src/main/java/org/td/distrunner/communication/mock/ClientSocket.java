@@ -8,7 +8,6 @@ import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
-
 public class ClientSocket implements IClientSocket {
 
 	public List<Message> Messages = new ArrayList<Message>();

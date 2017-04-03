@@ -53,14 +53,17 @@ public class ProcessRunnerTest {
 		assertEquals(InMemoryObjects.clientJobs.size(), 1);
 
 		// on client run job
-		for (int i = 0; i < 3; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			// refresh client job retrieval
 			hbJob.execute(null);
 			execJob.execute(null);
 		}
 
 		// look if process removed from table
+		hbJob.execute(null);
 		assertFalse(InMemoryObjects.currentNodeJobList.containsKey(correlationId));
+		InMemoryObjects.currentNodeJobList.size();
+		InMemoryObjects.clientJobs.size();
 		
 		/*
 		StringBuilder dump = new StringBuilder();

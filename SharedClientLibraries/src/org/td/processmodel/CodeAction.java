@@ -1,9 +1,23 @@
 package org.td.processmodel;
 
-public interface CodeAction<I, O> {
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-	public O Execute(I input) throws Exception;
+public abstract class CodeAction<I, O> {
 
-	public Boolean ValidateInput(I input) throws Exception;
+	protected ObjectMapper mapper = new ObjectMapper();
+
+	public abstract String Execute(String jsonInput) throws Exception;
+
+	public abstract Boolean ValidateInput(String jsonInput) throws Exception;
+
+	protected String convertResultToString(O output) throws Exception {
+		return mapper.writeValueAsString(output);
+	}
+
+	protected I readInputString(String jsonInput) throws Exception {
+		return this.mapper.readValue(jsonInput, new TypeReference<I>() {
+		});
+	}
 
 }

@@ -5,6 +5,7 @@ import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.ExecutionResultModel;
 import org.td.distrunner.model.Message;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class ExecutionResultHandle implements IRequestHandler {
@@ -20,10 +21,8 @@ public class ExecutionResultHandle implements IRequestHandler {
 			LogHelper.logError(e);
 		}
 		// process advance
-		if (reportedResult != null && reportedResult.JobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator) > 1) {
-			String processCorrelationId = reportedResult.JobId.substring(0,
-					reportedResult.JobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator));
-			MasterWorkSchedulingJob.handleJobResult(processCorrelationId, reportedResult.ExecutionResult);
+		if (reportedResult != null) {	
+			MasterWorkSchedulingJob.handleJobResult(reportedResult.JobId, reportedResult.ExecutionResult);
 		}
 		return null;
 	}

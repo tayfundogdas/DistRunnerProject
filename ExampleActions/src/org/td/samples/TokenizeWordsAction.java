@@ -5,20 +5,21 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.td.processmodel.CodeAction;
 
-public class TokenizeWordsAction implements CodeAction<String, List<String>> {
+public class TokenizeWordsAction extends CodeAction<String, List<String>> {
 
 	@Override
-	public List<String> Execute(String input) throws Exception {
+	public String Execute(String jsonInput) throws Exception {
+		String input = this.readInputString(jsonInput);
 		StringTokenizer st = new StringTokenizer(input);
 		List<String> tokens = new ArrayList<String>();
 		while (st.hasMoreElements()) {
 			tokens.add(st.nextToken());
 		}
-		return tokens;
+		return this.convertResultToString(tokens);
 	}
 
 	@Override
-	public Boolean ValidateInput(String input) throws Exception {
+	public Boolean ValidateInput(String jsonInput) throws Exception {
 		return true;
 	}
 

@@ -2,7 +2,6 @@ package org.td.distrunner.engine;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.td.distrunner.model.AppSettings;

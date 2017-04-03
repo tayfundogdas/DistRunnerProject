@@ -24,8 +24,10 @@ public class JarHelper {
 		// Getting the files from jar
 		Enumeration<? extends JarEntry> enumeration = jar.entries();
 		// find bpmn file
-		ZipEntry zipEntry = Collections.list(enumeration).stream().filter(
-				x -> x.getName().startsWith(processName.replace('.', '/') + "/") && x.getName().endsWith(".bpmn"))
+		ZipEntry zipEntry = Collections.list(enumeration).stream()
+				.filter(x -> x.getName()
+						.startsWith(processName.substring(0, processName.lastIndexOf('.')).replace('.', '/') + "/")
+						&& x.getName().endsWith(".bpmn"))
 				.findFirst().orElse(null);
 
 		if (zipEntry != null) {

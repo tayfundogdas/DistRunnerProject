@@ -20,6 +20,7 @@ public class CacheHelper {
 			try {
 				process = JarHelper.getProcessByName(processName);
 				if (process != null)
+					// TODO:What do to in case uploaded new version of current process?
 					InMemoryObjects.processCache.put(processName, process);
 			} catch (Exception e) {
 				LogHelper.logError(e);

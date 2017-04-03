@@ -10,6 +10,7 @@ public class ClientJobModel {
 	public String JobName;
 	public String JobParam;
 	public String AssignedClientId;
+	public Boolean IsProcessed;
 
 	public static List<ClientJobModel> getClientJobsByClientId(String clientId) {
 		List<ClientJobModel> result = new ArrayList<ClientJobModel>();

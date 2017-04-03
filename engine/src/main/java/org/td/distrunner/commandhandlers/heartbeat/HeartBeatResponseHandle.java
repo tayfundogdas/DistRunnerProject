@@ -7,6 +7,7 @@ import org.td.distrunner.engine.JsonHelper;
 import org.td.distrunner.engine.LogHelper;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.Message;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class HeartBeatResponseHandle implements IRequestHandler {
@@ -22,8 +23,9 @@ public class HeartBeatResponseHandle implements IRequestHandler {
 		}
 		if (myJobs != null) {
 			// sync my job list from server message
+			// add new items
 			for (ClientJobModel job : myJobs) {
-				if (!InMemoryObjects.currentNodeJobList.contains(job))
+				if (!InMemoryObjects.currentNodeJobList.containsKey(job.Id))
 					InMemoryObjects.currentNodeJobList.put(job.Id, job);
 			}
 		}
