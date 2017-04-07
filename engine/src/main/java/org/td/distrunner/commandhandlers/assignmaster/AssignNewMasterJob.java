@@ -4,9 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.helpers.CommunicationHelper;
 import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ClientModel;
@@ -38,7 +36,8 @@ public class AssignNewMasterJob {
 					// send my ip as new master address
 					mess.MessageContent = InMemoryObjects.clients.get(InMemoryObjects.AppId).Address;
 					try {
-						CommunicationHelper.sendMessagetoAddress(mess, client.Address);
+						//TODO: send message
+						//CommunicationHelper.sendMessagetoAddress(mess, client.Address);
 					} catch (Exception e) 
 					{
 						LogHelper.logError(e);

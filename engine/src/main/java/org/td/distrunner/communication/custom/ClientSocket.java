@@ -5,13 +5,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
 import org.td.distrunner.communication.IClientSocket;
+import org.td.distrunner.helpers.CommunicationHelper;
 import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.model.Message;
 
 public class ClientSocket implements IClientSocket {
-
-	private static final String CommunicationError = "CommErr";
 
 	private String getMasterWSAddress(int messageType) {
 		StringBuilder str = new StringBuilder();
@@ -50,13 +48,14 @@ public class ClientSocket implements IClientSocket {
 					result = response;
 			}
 		} catch (Exception e) {
-			result = CommunicationError;
+			result = CommunicationHelper.CommunicationError;
 			LogHelper.logError(e);
 		}
 		return result;
 	}
 
-	public void sendMessagetoAddress(Message message, String url) throws Exception {
-
+	public String sendMessagetoAddress(int messageType, String payLoad, String url) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

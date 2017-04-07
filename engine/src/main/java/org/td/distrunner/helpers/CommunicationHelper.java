@@ -5,6 +5,7 @@ import org.td.distrunner.model.Message;
 
 public class CommunicationHelper {
 
+	public static final String CommunicationError = "CommErr";
 	public static IClientSocket client;
 
 	public static void setClientMode(IClientSocket clientImp) {
@@ -25,11 +26,11 @@ public class CommunicationHelper {
 		return newContent.toString();
 	}
 
-	public static void sendMessagetoMaster(int messageType, String payLoad) {
-		client.sendMessagetoMaster(messageType, payLoad);
+	public static String sendMessagetoMaster(int messageType, String payLoad) {
+		return client.sendMessagetoMaster(messageType, payLoad);
 	}
 
-	public static void sendMessagetoAddress(Message message, String url) throws Exception {
-		client.sendMessagetoAddress(message, url);
+	public static String sendMessagetoAddress(int messageType, String payLoad, String url) throws Exception {
+		return client.sendMessagetoAddress(messageType, payLoad, url);
 	}
 }
