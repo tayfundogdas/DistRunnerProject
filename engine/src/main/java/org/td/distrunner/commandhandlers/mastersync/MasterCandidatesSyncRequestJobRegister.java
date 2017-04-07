@@ -1,7 +1,7 @@
 package org.td.distrunner.commandhandlers.mastersync;
 
 import org.td.distrunner.commandhandlers.IJobRegister;
-import org.td.distrunner.engine.JobRegisterHelper;
+import org.td.distrunner.helpers.JobRegisterHelper;
 import org.td.distrunner.model.AppSettings;
 
 public class MasterCandidatesSyncRequestJobRegister implements IJobRegister {

@@ -11,16 +11,16 @@ import java.nio.channels.ReadableByteChannel;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.CommunicationHelper;
+import org.td.distrunner.helpers.JarHelper;
+import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ExecutionResultModel;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
-import org.td.distrunner.processmodelparser.JarHelper;
 
 public class ExecuteJob implements Job {
 
@@ -102,7 +102,7 @@ public class ExecuteJob implements Job {
 		result.ExecutionResult = execResult;
 		mess.MessageContent = JsonHelper.getJsonString(result);
 		try {
-			CommunicationHelper.sendMessagetoMaster(mess);
+			//CommunicationHelper.sendMessagetoMaster(mess);
 		} catch (Exception e) {
 			LogHelper.logError(e);
 		}

@@ -1,7 +1,7 @@
 package org.td.distrunner.model;
 
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 

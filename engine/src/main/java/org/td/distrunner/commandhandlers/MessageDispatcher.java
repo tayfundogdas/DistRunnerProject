@@ -1,8 +1,6 @@
 package org.td.distrunner.commandhandlers;
 
 import org.td.distrunner.commandhandlers.assignmaster.NewMasterHandle;
-import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestHandle;
-import org.td.distrunner.commandhandlers.heartbeat.HeartBeatResponseHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncResponseHandle;
 import org.td.distrunner.commandhandlers.workschedule.ExecutionResultHandle;
@@ -16,12 +14,12 @@ public class MessageDispatcher {
 		IRequestHandler messageHandler = null;
 
 		switch (message.MessageType) {
-		case MessageTypes.HeartBeatRequestMessage:
-			messageHandler = new HeartBeatRequestHandle();
-			break;
-		case MessageTypes.HeartBeatResponseMessage:
-			messageHandler = new HeartBeatResponseHandle();
-			break;
+		//case MessageTypes.HeartBeatRequestMessage:
+		//	messageHandler = new HeartBeatRequestHandle();
+		//	break;
+		//case MessageTypes.HeartBeatResponseMessage:
+		//	messageHandler = new HeartBeatResponseHandle();
+		//	break;
 		case MessageTypes.MasterSyncRequestMessage:
 			messageHandler = new MasterCandidatesSyncRequestHandle();
 			break;

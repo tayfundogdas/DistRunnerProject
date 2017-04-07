@@ -1,8 +1,8 @@
 package org.td.distrunner.commandhandlers.assignmaster;
 
 import org.td.distrunner.commandhandlers.IRequestHandler;
-import org.td.distrunner.engine.JobRegisterHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.JobRegisterHelper;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.Message;
 

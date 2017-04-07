@@ -2,14 +2,13 @@ package org.td.distrunner.engine;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.td.distrunner.apirelated.ApiHandler;
 import org.td.distrunner.communication.custom.ServerSocket;
-import org.td.distrunner.communication.websocket.ServerHandler;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
@@ -32,17 +31,11 @@ public class JettyServer {
 		ServletHolder api = new ServletHolder(AppSettings.APIChannelName, ApiHandler.class);
 		apiServletRequestHandler.addServlet(api, "/*");
 		handlers.addHandler(apiServletRequestHandler);
-
-		// Add a websocket path
-		ContextHandler wsContext = new ContextHandler();
-		wsContext.setContextPath("/" + AppSettings.WSChannelName);
-		wsContext.setHandler(new ServerHandler());
-		handlers.addHandler(wsContext);
 		
 		// Add custom communication path
 		ServletContextHandler messageServletRequestHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		messageServletRequestHandler.setContextPath("/Message");
-		ServletHolder message = new ServletHolder("Message", ServerSocket.class);
+		messageServletRequestHandler.setContextPath("/communication");
+		ServletHolder message = new ServletHolder("communication", ServerSocket.class);
 		messageServletRequestHandler.addServlet(message, "/*");
 		handlers.addHandler(messageServletRequestHandler);
 

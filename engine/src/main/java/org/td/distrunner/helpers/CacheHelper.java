@@ -1,10 +1,10 @@
-package org.td.distrunner.engine;
+package org.td.distrunner.helpers;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.processmodelparser.JarHelper;
 
 public class CacheHelper {
 	public static void LoadProcessCache() {

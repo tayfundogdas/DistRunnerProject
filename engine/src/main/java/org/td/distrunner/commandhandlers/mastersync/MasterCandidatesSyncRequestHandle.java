@@ -2,7 +2,7 @@ package org.td.distrunner.commandhandlers.mastersync;
 
 import org.td.distrunner.commandhandlers.IRequestHandler;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
+import org.td.distrunner.helpers.JsonHelper;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 

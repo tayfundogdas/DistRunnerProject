@@ -1,8 +1,8 @@
 package org.td.distrunner.commandhandlers.workschedule;
 
 import org.td.distrunner.commandhandlers.IRequestHandler;
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.ExecutionResultModel;
 import org.td.distrunner.model.Message;
 

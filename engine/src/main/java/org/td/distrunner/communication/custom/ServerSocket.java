@@ -6,10 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
-import org.td.distrunner.commandhandlers.MessageDispatcher;
-import org.td.distrunner.engine.CommunicationHelper;
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.model.Message;
+import org.td.distrunner.commandhandlers.heartbeat.HeartBeatServerPipe;
 import org.td.distrunner.model.MessageTypes;
 
 public class ServerSocket extends HttpServlet {
@@ -23,18 +20,19 @@ public class ServerSocket extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setCharacterEncoding("UTF-8");
-		String message = IOUtils.toString(req.getInputStream(), "UTF-8");
-		
-		Message messageObj = Message.getMessagefromString(message);
-		if (messageObj.MessageType == MessageTypes.HeartBeatRequestMessage) {
-			// small hack to add incoming message fromAddress
-			messageObj.MessageContent = CommunicationHelper.generateClientId(messageObj, req.getRemoteAddr());
+		int messageType = Integer.parseInt(req.getPathInfo().substring(1));
+		String payload = IOUtils.toString(req.getInputStream(), "UTF-8");
+
+		String response = null;
+		switch (messageType) {
+		case MessageTypes.HeartBeatMessage:
+			response = HeartBeatServerPipe.handleHeartBeat(payload, req.getRemoteAddr());
+			break;
+		default:
+			break;
 		}
 
-		// process request message and send response
-		Message response = MessageDispatcher.HandleMessage(JsonHelper.getJsonString(messageObj));
-
+		resp.setCharacterEncoding("UTF-8");
 		if (response != null) {
 			resp.getWriter().print(response.toString());
 		}

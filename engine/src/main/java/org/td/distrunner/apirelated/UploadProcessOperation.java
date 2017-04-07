@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.jbpm.bpmn2.xml.XmlBPMNProcessDumper;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.td.distrunner.engine.InMemoryObjects;
+import org.td.distrunner.helpers.JarHelper;
 import org.td.distrunner.model.AppSettings;
-import org.td.distrunner.processmodelparser.JarHelper;
 
 public class UploadProcessOperation {
 

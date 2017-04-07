@@ -5,9 +5,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.CommunicationHelper;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ClientModel;
 import org.td.distrunner.model.Message;

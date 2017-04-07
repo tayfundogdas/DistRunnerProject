@@ -5,7 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.td.distrunner.processmodelparser.JarHelper;
+
+import org.td.distrunner.helpers.JarHelper;
 
 public class DownloadJarFileOperation {
 	public static void writeJartoResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {

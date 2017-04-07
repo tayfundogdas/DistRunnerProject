@@ -1,17 +1,16 @@
-package org.td.distrunner.engine;
+package org.td.distrunner.helpers;
 
 import org.td.distrunner.communication.IClientSocket;
 import org.td.distrunner.model.Message;
 
 public class CommunicationHelper {
-	
+
 	public static IClientSocket client;
-	
-	public static void setClientMode(IClientSocket clientImp)
-	{
+
+	public static void setClientMode(IClientSocket clientImp) {
 		CommunicationHelper.client = clientImp;
 	}
-	
+
 	public static String prepareRemoteAddress(String rawAddress) {
 		StringBuilder incomimgAddress = new StringBuilder(rawAddress);
 		incomimgAddress.deleteCharAt(0);
@@ -26,12 +25,11 @@ public class CommunicationHelper {
 		return newContent.toString();
 	}
 
-	public static void sendMessagetoMaster(Message message) throws Exception {
-		client.sendMessagetoMaster(message);
+	public static void sendMessagetoMaster(int messageType, String payLoad) {
+		client.sendMessagetoMaster(messageType, payLoad);
 	}
 
-	public static void sendMessagetoAddress(Message message, String url)
-			throws Exception {
+	public static void sendMessagetoAddress(Message message, String url) throws Exception {
 		client.sendMessagetoAddress(message, url);
 	}
 }

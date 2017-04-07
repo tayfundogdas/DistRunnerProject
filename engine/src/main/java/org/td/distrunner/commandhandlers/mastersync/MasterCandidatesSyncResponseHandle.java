@@ -3,8 +3,8 @@ package org.td.distrunner.commandhandlers.mastersync;
 import java.util.List;
 import org.td.distrunner.commandhandlers.IRequestHandler;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.Message;
 
 import com.fasterxml.jackson.core.type.TypeReference;

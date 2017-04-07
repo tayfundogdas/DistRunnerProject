@@ -10,11 +10,11 @@ import org.td.distrunner.commandhandlers.clientexecutor.ExecuteJob;
 import org.td.distrunner.commandhandlers.heartbeat.HeartBeatRequestJob;
 import org.td.distrunner.commandhandlers.workschedule.MasterWorkSchedulingJob;
 import org.td.distrunner.communication.mock.ClientSocket;
-import org.td.distrunner.engine.CacheHelper;
-import org.td.distrunner.engine.CommunicationHelper;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
-import org.td.distrunner.engine.LogHelper;
+import org.td.distrunner.helpers.CacheHelper;
+import org.td.distrunner.helpers.CommunicationHelper;
+import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
 
 public class ProcessRunnerTest {
 

@@ -3,7 +3,7 @@ package org.td.distrunner.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.td.distrunner.engine.InMemoryObjects;
-import org.td.distrunner.engine.JsonHelper;
+import org.td.distrunner.helpers.JsonHelper;
 
 public class ClientJobModel {
 	public String Id;

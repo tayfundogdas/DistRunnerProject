@@ -1,4 +1,4 @@
-package org.td.distrunner.processmodelparser;
+package org.td.distrunner.helpers;
 
 import java.io.File;
 import java.io.FilenameFilter;

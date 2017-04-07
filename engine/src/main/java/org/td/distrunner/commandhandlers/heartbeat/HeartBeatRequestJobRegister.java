@@ -1,7 +1,7 @@
 package org.td.distrunner.commandhandlers.heartbeat;
 
 import org.td.distrunner.commandhandlers.IJobRegister;
-import org.td.distrunner.engine.JobRegisterHelper;
+import org.td.distrunner.helpers.JobRegisterHelper;
 import org.td.distrunner.model.AppSettings;
 
 public class HeartBeatRequestJobRegister implements IJobRegister {
