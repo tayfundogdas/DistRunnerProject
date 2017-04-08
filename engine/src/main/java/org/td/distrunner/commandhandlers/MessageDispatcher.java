@@ -3,7 +3,6 @@ package org.td.distrunner.commandhandlers;
 import org.td.distrunner.commandhandlers.assignmaster.NewMasterHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncRequestHandle;
 import org.td.distrunner.commandhandlers.mastersync.MasterCandidatesSyncResponseHandle;
-import org.td.distrunner.commandhandlers.workschedule.ExecutionResultHandle;
 import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 
@@ -29,9 +28,9 @@ public class MessageDispatcher {
 		case MessageTypes.NewMasterMessage:
 			messageHandler = new NewMasterHandle();
 			break;
-		case MessageTypes.ExecutionResultMessage:
-			messageHandler = new ExecutionResultHandle();
-			break;
+		//case MessageTypes.ExecutionResultMessage:
+		//	messageHandler = new ExecutionResultHandle();
+		//	break;
 		default:
 			messageHandler = null;
 			break;

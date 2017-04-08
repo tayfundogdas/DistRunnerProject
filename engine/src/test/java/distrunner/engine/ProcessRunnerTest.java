@@ -55,14 +55,10 @@ public class ProcessRunnerTest {
 		// on client run job
 		for (int i = 0; i < 10; ++i) {
 			// refresh client job retrieval
-			hbJob.execute(null);
 			execJob.execute(null);
 		}
 
 		// look if process removed from table
-		hbJob.execute(null);
-		assertFalse(InMemoryObjects.currentNodeJobList.containsKey(correlationId));
-		InMemoryObjects.currentNodeJobList.size();
 		InMemoryObjects.clientJobs.size();
 		
 		/*

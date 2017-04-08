@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.td.distrunner.commandhandlers.heartbeat.HeartBeatServerPipe;
+import org.td.distrunner.commandhandlers.workschedule.GetClientJobPipe;
 import org.td.distrunner.model.MessageTypes;
 
 public class ServerSocket extends HttpServlet {
@@ -27,6 +28,9 @@ public class ServerSocket extends HttpServlet {
 		switch (messageType) {
 		case MessageTypes.HeartBeatMessage:
 			response = HeartBeatServerPipe.handleHeartBeat(payload, req.getRemoteAddr());
+			break;
+		case MessageTypes.GetJobMessage:
+			response = GetClientJobPipe.getClientJob(payload);
 			break;
 		default:
 			break;

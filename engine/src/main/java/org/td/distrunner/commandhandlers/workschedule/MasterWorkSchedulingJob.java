@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import org.jbpm.ruleflow.core.RuleFlowProcess;
-import org.jbpm.workflow.core.impl.DroolsConsequenceAction;
-import org.jbpm.workflow.core.node.ActionNode;
-import org.jbpm.workflow.core.node.CompositeContextNode;
-import org.jbpm.workflow.core.node.StartNode;
-import org.kie.api.definition.process.Node;
 import org.td.distrunner.commandhandlers.clientexecutor.ExecuteJob;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.helpers.JsonHelper;
 import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ClientModel;
-import org.td.distrunner.model.RunningProcess;
+import org.td.distrunner.model.NodeModel;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 //this method try to schedule jobs as parallel as possible by examining data dependencies
@@ -36,25 +30,15 @@ public class MasterWorkSchedulingJob {
 		}
 	}
 
-	private static void advanceCompositeContextNode(Node currNode, RunningProcess currProcess, String executionResult) {
-		CompositeContextNode nodeInfo = (CompositeContextNode) currNode;
+	private static void advanceSubProcess(NodeModel currProcess, String param) {
 
-		Node[] allNodes = nodeInfo.getNodes();
-
-		StartNode startNode = null;
-		for (Node node : allNodes) {
-			if (node instanceof StartNode)
-				startNode = (StartNode) node;
-		}
-
-		// if no start node in process start one node parallel
-		if (startNode == null && allNodes.length > 0) {
+		// start one node parallel
+		if (currProcess.SubItems.size() == 0)
+		{
 			try {
 				@SuppressWarnings("rawtypes")
-				List paralelInput = JsonHelper.mapper.readValue(executionResult, new TypeReference<List>() {
+				List paralelInput = JsonHelper.mapper.readValue(param, new TypeReference<List>() {
 				});
-				ActionNode currJob = (ActionNode) allNodes[0];
-				DroolsConsequenceAction action = (DroolsConsequenceAction) currJob.getAction();
 				int i = 1;
 				for (Object inp : paralelInput) {
 
@@ -62,8 +46,8 @@ public class MasterWorkSchedulingJob {
 
 					if (leastUsedClient != null) {
 						ClientJobModel clientJob = new ClientJobModel();
-						clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currNode.getId() + i;
-						clientJob.JobName = action.getConsequence();
+						clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currProcess.Id + i;
+						clientJob.JobName = currProcess.ExecutableName;
 						clientJob.JobParam = JsonHelper.getJsonString(inp);
 						clientJob.AssignedClientId = leastUsedClient.Id;
 
@@ -81,41 +65,25 @@ public class MasterWorkSchedulingJob {
 				LogHelper.logError(e);
 			}
 		}
-
-		// move running process
-		currProcess.CurrentNode = nodeInfo.getTo().getTo().getId();
-		currProcess.WaitingResultNode = allNodes[0].getId();
-
 	}
 
-	private static void scheduleActionToClient(Node currNode, RunningProcess currProcess, ClientModel leastUsedClient,
-			String executionResult) {
-		ActionNode nodeInfo = (ActionNode) currNode;
-		DroolsConsequenceAction action = (DroolsConsequenceAction) nodeInfo.getAction();
+	private static void scheduleActionToClient(NodeModel currProcess, ClientModel leastUsedClient, String param) {
 		ClientJobModel clientJob = new ClientJobModel();
-		clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currNode.getId();
-		clientJob.JobName = action.getConsequence();
-		clientJob.JobParam = executionResult;
+		clientJob.Id = currProcess.CorrelationId + CorrelationSeperator + currProcess.Id;
+		clientJob.JobName = currProcess.ExecutableName;
+		clientJob.JobParam = param;
 		clientJob.AssignedClientId = leastUsedClient.Id;
 
 		// put message to waiting queue
-		try {
-			InMemoryObjects.clientJobs.put(clientJob.Id, clientJob);
-			// increment client job count
-			leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
-			LogHelper.logTrace("Job assigned to client with info CorrId : " + currProcess.CorrelationId + " JobName : "
-					+ clientJob.JobName + " JobParam : " + clientJob.JobParam.substring(0,
-							clientJob.JobParam.length() > 50 ? 50 : clientJob.JobParam.length()));
-		} catch (Exception e) {
-			LogHelper.logError(e);
-		}
-
-		// move running process
-		currProcess.CurrentNode = nodeInfo.getTo().getTo().getId();
-		currProcess.WaitingResultNode = currNode.getId();
+		InMemoryObjects.clientJobs.put(clientJob.Id, clientJob);
+		// increment client job count
+		leastUsedClient.JobCount = leastUsedClient.JobCount + 1;
+		LogHelper.logTrace("Job assigned to client with info CorrId : " + currProcess.CorrelationId + " JobName : "
+				+ clientJob.JobName + " JobParam : "
+				+ clientJob.JobParam.substring(0, clientJob.JobParam.length() > 50 ? 50 : clientJob.JobParam.length()));
 	}
 
-	private static void processNode(Node currNode, RunningProcess currProcess, String executionResult) {
+	private static void processNode(NodeModel currProcess, String param) {
 
 		ClientModel leastUsedClient = getLeastUsedNode();
 		if (leastUsedClient == null) {
@@ -127,40 +95,30 @@ public class MasterWorkSchedulingJob {
 
 			// get flow node and process it
 			// for complex jobs
-			if (currNode instanceof CompositeContextNode) {
-				advanceCompositeContextNode(currNode, currProcess, executionResult);
+			if (currProcess.getIsSubProcess()) {
+				advanceSubProcess(currProcess, param);
 			}
 
 			// for single job assign to client
-			if (currNode instanceof ActionNode) {
-				scheduleActionToClient(currNode, currProcess, leastUsedClient, executionResult);
+			if (currProcess.getIsExecutable()) {
+				scheduleActionToClient(currProcess, leastUsedClient, param);
 			}
 
+			// move running process
+			currProcess.CurrentNode = currProcess.CurrentNode + 1;
+
 		}
 
-	}
-
-	private static void clearClientJobsforFinishedProcess(String correlationId) {
-		for (String jobId : InMemoryObjects.clientJobs.keySet()) {
-			if (jobId.startsWith(correlationId))
-				InMemoryObjects.clientJobs.remove(jobId);
-		}
 	}
 
 	// after handleJobResult
-	private static void advanceNodeWithJobResult(String jobId, String executionResult) {
-		if (jobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator) <= 0) {
-			LogHelper.logTrace("Bad jobid for : " + jobId);
-			return;
-		}
-
+	private static void advanceNodeWithParam(String processCorrelationId, String param) {
 		// remove client job for result
-		if (InMemoryObjects.clientJobs.containsKey(jobId))
-			InMemoryObjects.clientJobs.remove(jobId);
+		if (InMemoryObjects.clientJobs.containsKey(processCorrelationId))
+			InMemoryObjects.clientJobs.remove(processCorrelationId);
 
-		String processCorrelationId = jobId.substring(0, jobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator));
 		// get process and check if its exist
-		RunningProcess currProcess = InMemoryObjects.runningProcessList.get(processCorrelationId);
+		NodeModel currProcess = InMemoryObjects.runningProcessList.get(processCorrelationId);
 
 		if (currProcess == null) {
 			// clear client job list for finished process
@@ -170,61 +128,41 @@ public class MasterWorkSchedulingJob {
 		}
 
 		// look if process finished and remove from process table
-		String cacheName = currProcess.Id
-				.substring(currProcess.Id.indexOf(MasterWorkSchedulingJob.CorrelationSeperator) + 1);
-		RuleFlowProcess mainFlow = InMemoryObjects.processCache.get(cacheName);
-
-		// set after start node if process just started
-		if (currProcess.CurrentNode == -1)
-			currProcess.CurrentNode = mainFlow.getStart(null).getTo().getTo().getId();
-
-		// set after start node if process just started
-		if (currProcess.WaitingResultNode == -1)
-			currProcess.WaitingResultNode = mainFlow.getStart(null).getTo().getTo().getId();
-		else {
-			String currJobResutId = jobId.substring(jobId.indexOf(MasterWorkSchedulingJob.CorrelationSeperator) + 1);
-			if (Long.parseLong(currJobResutId) != currProcess.WaitingResultNode) {
-				// Redundant result we skip it
-				return;
-			}
-		}
-
-		// process main process
-		processNode(mainFlow.getNode(currProcess.CurrentNode), currProcess, executionResult);
-
-		// test if flow ended
-		if (mainFlow.getNode(currProcess.CurrentNode).getOutgoingConnections().isEmpty()) {
+		if (currProcess.CurrentNode == NodeModel.ProcessEnd) {
 			// remove finished process
 			InMemoryObjects.runningProcessList.remove(currProcess.CorrelationId);
 			LogHelper.logTrace("Process finished : " + currProcess.CorrelationId);
 			return;
 		}
+
+		// process
+		processNode(currProcess.SubItems.get(currProcess.CurrentNode), param);
 	}
 
 	// start process first item and return correlationId for process public
 	public static String startProcess(String processName, String firstParam) throws Exception {
 		// create process unique id
 		String correlationId = UUID.randomUUID().toString();
-		RunningProcess process = new RunningProcess();
+		NodeModel process = new NodeModel();
 		process.CorrelationId = correlationId;
-		process.Id = correlationId + CorrelationSeperator + processName;
+		process.Id = processName;
 		// put process to global table
 		InMemoryObjects.runningProcessList.put(process.CorrelationId, process);
 		// make logging
 		LogHelper.logTrace("Process started : " + process.CorrelationId);
 		// make ready process first item to run
-		advanceNodeWithJobResult(process.Id, firstParam);
+		advanceNodeWithParam(process.CorrelationId, firstParam);
 		// return process correlationId to track return
 		return process.CorrelationId;
 	}
 
 	// if a result come from assigned node schedule new job public static
-	public static void handleJobResult(String jobId, String executionResult) {
+	public static void handleJobResult(String processCorrelationId, String executionResult) {
 		if (executionResult.equals(ExecuteJob.JobFailMesage)) {
 			// LogHelper.logTrace("job failed on client");
 			// TODO:What do to in case of error in job?
 		} else
-			advanceNodeWithJobResult(jobId, executionResult);
+			advanceNodeWithParam(processCorrelationId, executionResult);
 	}
 
 	// if no heart beat from scheduled node reschedule to new node public

@@ -1,24 +1,15 @@
 package org.td.distrunner.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.helpers.JsonHelper;
+import org.td.distrunner.helpers.LogHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ClientJobModel {
 	public String Id;
 	public String JobName;
 	public String JobParam;
 	public String AssignedClientId;
-	public Boolean IsProcessed;
-
-	public static List<ClientJobModel> getClientJobsByClientId(String clientId) {
-		List<ClientJobModel> result = new ArrayList<ClientJobModel>();
-		for (ClientJobModel job : InMemoryObjects.clientJobs.values())
-			if (job.AssignedClientId.equals(clientId))
-				result.add(job);
-		return result;
-	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -32,5 +23,17 @@ public class ClientJobModel {
 	@Override
 	public String toString() {
 		return JsonHelper.getJsonString(this);
+	}
+	
+	public static ClientJobModel getFromString(String json) {
+		ClientJobModel result = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			result = mapper.readValue(json, new TypeReference<ClientJobModel>() {
+			});
+		} catch (Exception e) {
+			LogHelper.logError(e);
+		}
+		return result;
 	}
 }

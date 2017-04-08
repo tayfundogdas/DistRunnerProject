@@ -3,14 +3,12 @@ package org.td.distrunner.commandhandlers.heartbeat;
 import org.joda.time.DateTime;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.model.ClientModel;
-import org.td.distrunner.model.HeartBeatModel;
 
 public class HeartBeatServerPipe {
 	public static String handleHeartBeat(String payload, String clientAddress) {
 		String res = null;
 
-		HeartBeatModel mess = HeartBeatModel.getFromString(payload);
-		String clientUniqueId = mess.AppId;
+		String clientUniqueId = payload;
 		// make heartBeat updates to tables
 		if (InMemoryObjects.clients.containsKey(clientUniqueId)) // existing
 		{

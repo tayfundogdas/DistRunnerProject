@@ -14,12 +14,10 @@ import org.quartz.JobExecutionException;
 import org.td.distrunner.engine.InMemoryObjects;
 import org.td.distrunner.helpers.CommunicationHelper;
 import org.td.distrunner.helpers.JarHelper;
-import org.td.distrunner.helpers.JsonHelper;
 import org.td.distrunner.helpers.LogHelper;
 import org.td.distrunner.model.AppSettings;
 import org.td.distrunner.model.ClientJobModel;
 import org.td.distrunner.model.ExecutionResultModel;
-import org.td.distrunner.model.Message;
 import org.td.distrunner.model.MessageTypes;
 
 public class ExecuteJob implements Job {
@@ -84,8 +82,6 @@ public class ExecuteJob implements Job {
 
 	private static void executeJobAndReportResulttoMaster(ClientJobModel myJob) {
 		// run job and report result
-		Message mess = new Message();
-		mess.MessageType = MessageTypes.ExecutionResultMessage;
 		ExecutionResultModel result = new ExecutionResultModel();
 		result.JobId = myJob.Id;
 		String execResult = null;
@@ -94,31 +90,21 @@ public class ExecuteJob implements Job {
 		} catch (Exception e) {
 			execResult = JobFailMesage;
 			LogHelper.logError(e);
-			// LogHelper.logTrace("Error on run with job : " +
-			// myJob.toString());
 		}
 		LogHelper.logTrace("Result for " + myJob.Id + " : "
 				+ execResult.substring(0, execResult.length() > 50 ? 50 : execResult.length()));
 		result.ExecutionResult = execResult;
-		mess.MessageContent = JsonHelper.getJsonString(result);
-		try {
-			//CommunicationHelper.sendMessagetoMaster(mess);
-		} catch (Exception e) {
-			LogHelper.logError(e);
-		}
+		// send result
+		CommunicationHelper.sendMessagetoMaster(MessageTypes.ExecutionResultMessage, result.toString());
 	}
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		ClientJobModel myJob = InMemoryObjects.currentNodeJobList.values().stream()
-				.filter(x -> x.IsProcessed == null || x.IsProcessed == false).findFirst().orElse(null);
-		if (myJob != null) {
+		String res = CommunicationHelper.sendMessagetoMaster(MessageTypes.GetJobMessage, InMemoryObjects.AppId);
+		if (res != CommunicationHelper.CommunicationError)
+		{
+			ClientJobModel myJob  = ClientJobModel.getFromString(res);
 			ExecuteJob.executeJobAndReportResulttoMaster(myJob);
-			//TODO: remove  executed job
-			//InMemoryObjects.currentNodeJobList.remove(myJob.Id);
-			myJob.IsProcessed = true;
-			InMemoryObjects.currentNodeJobList.put(myJob.Id, myJob);
-			System.out.println(myJob.JobName);
 		}
 	}
 }
