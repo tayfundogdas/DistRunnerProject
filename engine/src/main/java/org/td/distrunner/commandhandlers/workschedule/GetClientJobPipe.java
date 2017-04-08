@@ -9,7 +9,7 @@ public class GetClientJobPipe {
 
 		String clientId = payload;
 		ClientJobModel item = InMemoryObjects.clientJobs.values().stream()
-				.filter(x -> x.AssignedClientId.equals(clientId)).findFirst().orElse(null);
+				.filter(x -> x.AssignedClientId.startsWith(clientId)).findFirst().orElse(null);
 		if (item != null) {
 			res = item.toString();
 		}

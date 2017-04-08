@@ -101,10 +101,10 @@ public class ExecuteJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		String res = CommunicationHelper.sendMessagetoMaster(MessageTypes.GetJobMessage, InMemoryObjects.AppId);
-		if (res != CommunicationHelper.CommunicationError)
-		{
-			ClientJobModel myJob  = ClientJobModel.getFromString(res);
-			ExecuteJob.executeJobAndReportResulttoMaster(myJob);
+		if (res != CommunicationHelper.CommunicationError && res != null) {
+			ClientJobModel myJob = ClientJobModel.getFromString(res);
+			if (myJob != null)
+				ExecuteJob.executeJobAndReportResulttoMaster(myJob);
 		}
 	}
 }

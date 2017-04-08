@@ -47,28 +47,33 @@ public class ProcessRunnerTest {
 
 	@Test
 	public void testJobRun() throws Exception {
+		// register client
+		hbJob.execute(null);
+
 		// start job
 		String firstParam = JsonHelper.getJsonString("https://en.wikipedia.org/wiki/Java");
-		String correlationId = MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor", firstParam);
+		MasterWorkSchedulingJob.startProcess("org.td.samples.StringProcessor", firstParam);
 		assertEquals(InMemoryObjects.clientJobs.size(), 1);
 
 		// on client run job
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			// refresh client job retrieval
 			execJob.execute(null);
 		}
 
+		while (InMemoryObjects.clientJobs.size() > 0)
+			execJob.execute(null);
+
 		// look if process removed from table
-		InMemoryObjects.clientJobs.size();
-		
+		System.out.println(InMemoryObjects.clientJobs.size());
+
 		/*
-		StringBuilder dump = new StringBuilder();
-		for (Message mess : commChannel.Messages) {
-			dump.append(mess.toString());
-			dump.append(System.lineSeparator());
-		}		
-		FileUtils.writeStringToFile(new File("D:\\output.txt"), dump.toString());
-		*/
+		 * StringBuilder dump = new StringBuilder(); for (Message mess :
+		 * commChannel.Messages) { dump.append(mess.toString());
+		 * dump.append(System.lineSeparator()); }
+		 * FileUtils.writeStringToFile(new File("D:\\output.txt"),
+		 * dump.toString());
+		 */
 	}
 
 	public static void main(String[] args) throws Exception {

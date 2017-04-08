@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.td.distrunner.commandhandlers.heartbeat.HeartBeatServerPipe;
 import org.td.distrunner.commandhandlers.workschedule.GetClientJobPipe;
+import org.td.distrunner.commandhandlers.workschedule.MasterWorkSchedulingJob;
 import org.td.distrunner.model.MessageTypes;
 
 public class ServerSocket extends HttpServlet {
@@ -31,6 +32,9 @@ public class ServerSocket extends HttpServlet {
 			break;
 		case MessageTypes.GetJobMessage:
 			response = GetClientJobPipe.getClientJob(payload);
+			break;
+		case MessageTypes.ExecutionResultMessage:
+			response = MasterWorkSchedulingJob.handleJobResult(payload);
 			break;
 		default:
 			break;
