@@ -76,8 +76,11 @@ public class MasterWorkSchedulingJob {
 
 	private static void scheduleActionToClient(NodeModel currNode, ClientModel leastUsedClient, String param,
 			String processCorrelationId) {
+		NodeModel currProcess = InMemoryObjects.runningProcessList.get(processCorrelationId);
+
 		ClientJobModel clientJob = new ClientJobModel();
-		clientJob.Id = processCorrelationId + CorrelationSeperator + currNode.Id;
+		clientJob.Id = processCorrelationId + CorrelationSeperator + currNode.Id + CorrelationSeperator
+				+ currProcess.CurrentNode;
 		clientJob.JobName = currNode.ExecutableName;
 		clientJob.JobParam = param;
 		clientJob.AssignedClientId = leastUsedClient.Id;
@@ -125,13 +128,6 @@ public class MasterWorkSchedulingJob {
 		// get process and check if its exist
 		NodeModel currProcess = InMemoryObjects.runningProcessList.get(processCorrelationId);
 
-		if (currProcess == null) {
-			// clear client job list for finished process
-			// clearClientJobsforFinishedProcess(processCorrelationId);
-			// LogHelper.logTrace("No process for : " + correlationId);
-			return;
-		}
-
 		// look if process finished and remove from process table
 		if (currProcess.CurrentNode >= currProcess.SubItems.size()) {
 			// remove finished process
@@ -170,10 +166,31 @@ public class MasterWorkSchedulingJob {
 			// remove client job for result
 			if (InMemoryObjects.clientJobs.containsKey(executionResult.JobId))
 				InMemoryObjects.clientJobs.remove(executionResult.JobId);
+			
+			String processCorrelationId = executionResult.JobId.substring(0,
+					executionResult.JobId.indexOf(CorrelationSeperator));
+			NodeModel currProcess = InMemoryObjects.runningProcessList.get(processCorrelationId);
 
-			advanceNodeWithParam(
-					executionResult.JobId.substring(0, executionResult.JobId.indexOf(CorrelationSeperator)),
-					executionResult.ExecutionResult);
+			if (currProcess == null) {
+				// clear client job list for finished process
+				// clearClientJobsforFinishedProcess(processCorrelationId);
+				// LogHelper.logTrace("No process for : " + correlationId);
+				return null;
+			}
+			
+			Integer stepId = -1;
+			try
+			{
+				stepId = Integer.parseInt(executionResult.JobId.substring(
+						executionResult.JobId.lastIndexOf(CorrelationSeperator) + 1, executionResult.JobId.length()));
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+
+			if (stepId == (currProcess.CurrentNode-1)) {
+				advanceNodeWithParam(processCorrelationId, executionResult.ExecutionResult);
+			}
 		}
 
 		return null;
